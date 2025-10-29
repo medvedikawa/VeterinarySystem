@@ -39,14 +39,21 @@
             // 
             // btnLogin
             // 
+            btnLogin.BackColor = Color.FromArgb(64, 120, 170);
+            btnLogin.Cursor = Cursors.Hand;
+            btnLogin.FlatAppearance.BorderColor = Color.FromArgb(64, 120, 170);
+            btnLogin.FlatAppearance.BorderSize = 0;
+            btnLogin.FlatAppearance.MouseDownBackColor = Color.FromArgb(64, 120, 170);
+            btnLogin.FlatAppearance.MouseOverBackColor = Color.FromArgb(64, 120, 170);
             btnLogin.FlatStyle = FlatStyle.Flat;
-            btnLogin.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnLogin.Location = new Point(129, 314);
+            btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnLogin.ForeColor = Color.White;
+            btnLogin.Location = new Point(120, 304);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(75, 29);
+            btnLogin.Size = new Size(93, 36);
             btnLogin.TabIndex = 0;
             btnLogin.Text = "Login";
-            btnLogin.UseVisualStyleBackColor = true;
+            btnLogin.UseVisualStyleBackColor = false;
             btnLogin.Click += btnLogin_Click;
             // 
             // txtUsername
@@ -69,6 +76,7 @@
             // lblUsername
             // 
             lblUsername.AutoSize = true;
+            lblUsername.BackColor = Color.Transparent;
             lblUsername.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblUsername.Location = new Point(33, 189);
             lblUsername.Name = "lblUsername";
@@ -79,6 +87,7 @@
             // lblPassword
             // 
             lblPassword.AutoSize = true;
+            lblPassword.BackColor = Color.Transparent;
             lblPassword.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblPassword.Location = new Point(33, 233);
             lblPassword.Name = "lblPassword";
@@ -88,6 +97,7 @@
             // 
             // pictrLogo
             // 
+            pictrLogo.BackColor = Color.Transparent;
             pictrLogo.Image = Properties.Resources.logo__1_;
             pictrLogo.Location = new Point(77, 31);
             pictrLogo.Name = "pictrLogo";
@@ -100,7 +110,9 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(330, 378);
+            BackColor = Color.FromArgb(250, 170, 80);
+            BackgroundImage = Properties.Resources.loginImage;
+            ClientSize = new Size(330, 413);
             Controls.Add(pictrLogo);
             Controls.Add(lblPassword);
             Controls.Add(lblUsername);
