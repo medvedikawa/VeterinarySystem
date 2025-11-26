@@ -63,6 +63,26 @@ namespace VeterinarySystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap assets_1_ {
+            get {
+                object obj = ResourceManager.GetObject("assets(1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap assets_2_ {
+            get {
+                object obj = ResourceManager.GetObject("assets(2)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap calendarlogo {
             get {
                 object obj = ResourceManager.GetObject("calendarlogo", resourceCulture);
@@ -86,6 +106,26 @@ namespace VeterinarySystem.Properties {
         internal static System.Drawing.Bitmap dddddddddd {
             get {
                 object obj = ResourceManager.GetObject("dddddddddd", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap forForm {
+            get {
+                object obj = ResourceManager.GetObject("forForm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap iconView {
+            get {
+                object obj = ResourceManager.GetObject("iconView", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -146,6 +186,36 @@ namespace VeterinarySystem.Properties {
         internal static System.Drawing.Bitmap logo_1_ {
             get {
                 object obj = ResourceManager.GetObject("logo(1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap placeholderPetImage {
+            get {
+                object obj = ResourceManager.GetObject("placeholderPetImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PlainBG {
+            get {
+                object obj = ResourceManager.GetObject("PlainBG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Plus_Emoji__1_ {
+            get {
+                object obj = ResourceManager.GetObject("Plus-Emoji (1)", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
