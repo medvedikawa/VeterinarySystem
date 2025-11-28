@@ -17,6 +17,11 @@ namespace VeterinarySystem
         {
             InitializeComponent();
         }
+        //String age;
+        int age;
+
+        // runtime-created checkbox to allow manual age entry (made optional so no Designer changes)
+        private CheckBox chkManualAge;
 
         private void btnUpload_Click(object sender, EventArgs e)
         {
@@ -58,6 +63,41 @@ namespace VeterinarySystem
             cmbBreeds.Items.Clear();
             cmbBreeds.Text = "";
             cmbBreeds.SelectedIndex = -1;
+
+            // Set DateTimePicker maximum date to today (can't select future dates)
+            dtBday.MaxDate = DateTime.Today;
+
+            // Set default value to today
+            dtBday.Value = DateTime.Today;
+
+            // Optional: Set format for better display
+            dtBday.Format = DateTimePickerFormat.Long;
+
+            // --- IMPORTANT: wire the ValueChanged handler (designer didn't) ---
+            dtBday.ValueChanged += dtpDOB_ValueChanged;
+
+            // Create the "Enter age manually" checkbox at runtime (keeps Designer clean)
+            chkManualAge = new CheckBox
+            {
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9.0F, FontStyle.Regular, GraphicsUnit.Point),
+                Location = new Point(528, 128), // place near the age textbox
+                Name = "chkManualAge",
+                Text = "Enter age manually",
+                UseVisualStyleBackColor = true
+            };
+            chkManualAge.CheckedChanged += chkManualAge_CheckedChanged;
+
+            // Add it to the same panel so layout stays consistent
+            panel1.Controls.Add(chkManualAge);
+
+            // Default: DOB mode (age auto-calculated)
+            txtAge.ReadOnly = true;
+            dtBday.Enabled = true;
+            chkManualAge.Checked = false;
+
+            // Populate the age textbox once immediately
+            dtpDOB_ValueChanged(dtBday, EventArgs.Empty);
         }
 
         private void LoadDogBreeds()
@@ -67,18 +107,33 @@ namespace VeterinarySystem
             cmbBreeds.SelectedIndex = -1;
 
             string[] dogBreeds = {
-        "Non-Pedigree Dog", "Labrador Retriever", "German Shepherd", "Golden Retriever",
-        "French Bulldog", "Bulldog", "Poodle", "Beagle",
-        "Rottweiler", "German Shorthaired Pointer", "Dachshund",
-        "Pembroke Welsh Corgi", "Australian Shepherd", "Yorkshire Terrier",
-        "Boxer", "Great Dane", "Siberian Husky", "Doberman Pinscher",
-        "Cavalier King Charles Spaniel", "Miniature Schnauzer",
-        "Shih Tzu", "Boston Terrier", "Pomeranian", "Havanese",
-        "Shetland Sheepdog", "Brittany", "Pug", "Cocker Spaniel",
-        "Miniature American Shepherd", "Mastiff", "Chihuahua",
-        "Border Collie", "Basset Hound", "Newfoundland",
-        "Bernese Mountain Dog", "Akita", "Shiba Inu", "Dalmatian"
-    };
+    "Non-Pedigree Dog", "Labrador Retriever", "German Shepherd", "Golden Retriever",
+    "French Bulldog", "Bulldog", "Poodle", "Beagle",
+    "Rottweiler", "German Shorthaired Pointer", "Dachshund",
+    "Pembroke Welsh Corgi", "Australian Shepherd", "Yorkshire Terrier",
+    "Boxer", "Great Dane", "Siberian Husky", "Doberman Pinscher",
+    "Cavalier King Charles Spaniel", "Miniature Schnauzer",
+    "Shih Tzu", "Boston Terrier", "Pomeranian", "Havanese",
+    "Shetland Sheepdog", "Brittany", "Pug", "Cocker Spaniel",
+    "Miniature American Shepherd", "Mastiff", "Chihuahua",
+    "Border Collie", "Basset Hound", "Newfoundland",
+    "Bernese Mountain Dog", "Akita", "Shiba Inu", "Dalmatian",
+    "Australian Cattle Dog", "Cane Corso", "Weimaraner", "Vizsla",
+    "Belgian Malinois", "Bichon Frise", "Maltese", "Saint Bernard",
+    "Rhodesian Ridgeback", "West Highland White Terrier", "Bloodhound",
+    "Bull Terrier", "Samoyed", "Papillon", "Portuguese Water Dog",
+    "Cairn Terrier", "Irish Setter", "Soft Coated Wheaten Terrier",
+    "Alaskan Malamute", "Airedale Terrier", "Whippet", "Staffordshire Bull Terrier",
+    "English Springer Spaniel", "Old English Sheepdog", "Cardigan Welsh Corgi",
+    "Chow Chow", "Greater Swiss Mountain Dog", "Afghan Hound",
+    "Pekingese", "Basenji", "Italian Greyhound", "Chinese Shar-Pei",
+    "Flat-Coated Retriever", "Chesapeake Bay Retriever", "Jack Russell Terrier",
+    "Collie", "Shih Poo", "Goldendoodle", "Labradoodle", "Cockapoo",
+    "Cavapoo", "Schnoodle", "Bernedoodle", "Australian Labradoodle",
+    "Lhasa Apso", "American Eskimo Dog", "Bouvier des Flandres",
+    "Finnish Spitz", "Kuvasz", "Keeshond", "Saluki", "Greyhound",
+    "Irish Wolfhound", "Scottish Terrier", "Norwich Terrier", "Norfolk Terrier"
+};
 
             cmbBreeds.Items.AddRange(dogBreeds);
         }
@@ -90,16 +145,27 @@ namespace VeterinarySystem
             cmbBreeds.SelectedIndex = -1;
 
             string[] catBreeds = {
-        "Non-Pedigree Cat", "Domestic Shorthair", "Domestic Longhair", "Persian",
-        "Maine Coon", "Ragdoll", "British Shorthair", "Siamese",
-        "American Shorthair", "Scottish Fold", "Sphynx", "Bengal",
-        "Abyssinian", "Birman", "Oriental Shorthair", "Devon Rex",
-        "American Bobtail", "Himalayan", "Burmese", "Russian Blue",
-        "Norwegian Forest", "Cornish Rex", "Exotic Shorthair",
-        "Turkish Angora", "Manx", "Balinese", "Tonkinese",
-        "Siberian", "Somali", "Japanese Bobtail", "Turkish Van",
-        "Chartreux", "Korat", "Ocicat", "Singapura", "Havana Brown"
-    };
+    "Non-Pedigree Cat", "Domestic Shorthair", "Domestic Longhair", "Persian",
+    "Maine Coon", "Ragdoll", "British Shorthair", "Siamese",
+    "American Shorthair", "Scottish Fold", "Sphynx", "Bengal",
+    "Abyssinian", "Birman", "Oriental Shorthair", "Devon Rex",
+    "American Bobtail", "Himalayan", "Burmese", "Russian Blue",
+    "Norwegian Forest", "Cornish Rex", "Exotic Shorthair",
+    "Turkish Angora", "Manx", "Balinese", "Tonkinese",
+    "Siberian", "Somali", "Japanese Bobtail", "Turkish Van",
+    "Chartreux", "Korat", "Ocicat", "Singapura", "Havana Brown",
+    "Ragamuffin", "Selkirk Rex", "LaPerm", "Egyptian Mau",
+    "American Curl", "Bombay", "Munchkin", "Savannah",
+    "Peterbald", "Toyger", "Snowshoe", "American Wirehair",
+    "European Shorthair", "Pixie-Bob", "British Longhair",
+    "Chausie", "California Spangled", "Cymric", "German Rex",
+    "Javanese", "Nebelung", "Ragdoll Mink", "York Chocolate",
+    "Colorpoint Shorthair", "Khao Manee", "Kurilian Bobtail",
+    "Sokoke", "Thai", "Australian Mist", "Chantilly-Tiffany",
+    "Dragon Li", "Donskoy", "Foldex", "Highlander",
+    "Kinkalow", "Lykoi", "Minuet", "Ojos Azules",
+    "Raas", "Sam Sawet", "Serengeti", "Suphalak"
+};
 
             cmbBreeds.Items.AddRange(catBreeds);
         }
@@ -148,6 +214,107 @@ namespace VeterinarySystem
         private void cmbSpecies_SelectedIndexChanged(object sender, EventArgs e)
         {
             species_SelectedIndexChanged(sender, e);
+        }
+
+        private void txtOwnerContactNo_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtContactNumber_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Only allow numbers and backspace
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
+            }
+
+            // Limit to 11 digits (don't count backspace)
+            if (txtOwnerContactNo.Text.Length >= 11 && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void dtpDOB_ValueChanged(object sender, EventArgs e)
+        {
+            // If user chose manual age entry, do not auto-calculate
+            if (chkManualAge != null && chkManualAge.Checked)
+                return;
+
+            DateTime dob = dtBday.Value;
+            DateTime today = DateTime.Today;
+
+            // Calculate age
+            age = today.Year - dob.Year;
+
+            // Adjust if birthday hasn't occurred this year yet
+            if (dob.Date > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            // Display age in textbox
+            txtAge.Text = age.ToString();
+
+            // Optional: Show age in years and months for young pets
+            if (age < 2)
+            {
+                int months = (today.Year - dob.Year) * 12 + today.Month - dob.Month;
+                if (today.Day < dob.Day)
+                    months--;
+
+                txtAge.Text = $"{age} year(s), {months % 12} month(s)";
+            }
+        }
+
+        // Now allow digits when manual mode is enabled; don't show messagebox
+        private void txtAge_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // allow digits and backspace only
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void chkManualAge_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkManualAge == null)
+                return;
+
+            bool manual = chkManualAge.Checked;
+
+            // When manual, enable txtAge for input and disable the date picker
+            txtAge.ReadOnly = !manual;
+            dtBday.Enabled = !manual;
+
+            if (!manual)
+            {
+                // Switch back to DOB mode and recalc
+                dtpDOB_ValueChanged(dtBday, EventArgs.Empty);
+            }
+            else
+            {
+                // Clear age field to let user type
+                txtAge.Text = "";
+                age = 0;
+            }
+        }
+
+        private void btnConfirm_Click(object sender, EventArgs e)
+        {
+            // Prefer user-entered age if manual mode; otherwise use calculated
+            if (chkManualAge != null && chkManualAge.Checked)
+            {
+                if (!int.TryParse(txtAge.Text, out age))
+                {
+                    MessageBox.Show("Please enter a valid numeric age.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+
+            MessageBox.Show(age.ToString());
         }
     }
 }

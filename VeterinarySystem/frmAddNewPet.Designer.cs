@@ -327,6 +327,7 @@
             btnConfirm.TabIndex = 4;
             btnConfirm.Text = "Confirm";
             btnConfirm.UseVisualStyleBackColor = false;
+            btnConfirm.Click += btnConfirm_Click;
             // 
             // btnCancel
             // 
