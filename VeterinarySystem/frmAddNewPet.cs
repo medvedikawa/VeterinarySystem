@@ -8,11 +8,17 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace VeterinarySystem
 {
     public partial class frmAddNewPet : Form
     {
+        // Maximum allowed weight in kilograms.
+        // Set slightly above the heaviest recorded domestic dog to enforce a practical upper bound.
+        // (Using 160 kg as a safe ceiling for pet weight entries.)
+        private const decimal MAX_WEIGHT_KG = 160m;
+
         public frmAddNewPet()
         {
             InitializeComponent();
@@ -95,6 +101,13 @@ namespace VeterinarySystem
             txtAge.ReadOnly = true;
             dtBday.Enabled = true;
             chkManualAge.Checked = false;
+
+            // Wire input handlers for validation
+            txtOwnerName.KeyPress += txtOwnerName_KeyPress;
+            txtOwnerContactNo.KeyPress += txtOwnerContactNo_KeyPress;
+            txtOwnerContactNo.Leave += txtOwnerContactNo_Leave;
+            txtWeight.KeyPress += txtWeight_KeyPress;
+            txtWeight.Leave += txtWeight_Leave;
 
             // Populate the age textbox once immediately
             dtpDOB_ValueChanged(dtBday, EventArgs.Empty);
@@ -221,18 +234,44 @@ namespace VeterinarySystem
 
         }
 
-        private void txtContactNumber_KeyPress(object sender, KeyPressEventArgs e)
+        // Enforce only digits and maximum length (11). Wired to txtOwnerContactNo.KeyPress
+        private void txtOwnerContactNo_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // Only allow numbers and backspace
-            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
+            // Allow control keys (backspace, delete, arrow navigation)
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // Only allow digits
+            if (!char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            var tb = sender as TextBox;
+            if (tb == null)
+                return;
+
+            // If selection will replace some text, compute resulting length
+            int newLength = tb.Text.Length - tb.SelectionLength + 1; // +1 for this key
+            if (newLength > 11)
             {
                 e.Handled = true;
             }
+        }
 
-            // Limit to 11 digits (don't count backspace)
-            if (txtOwnerContactNo.Text.Length >= 11 && e.KeyChar != (char)Keys.Back)
+        // When leaving the contact field ensure exactly 11 digits
+        private void txtOwnerContactNo_Leave(object sender, EventArgs e)
+        {
+            var digits = (txtOwnerContactNo.Text ?? "").Trim();
+            if (digits.Length == 0)
+                return; // allow empty if optional
+
+            if (digits.Length != 11 || !digits.All(char.IsDigit))
             {
-                e.Handled = true;
+                MessageBox.Show("Contact number must be exactly 11 digits.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtOwnerContactNo.Focus();
+                txtOwnerContactNo.SelectAll();
             }
         }
 
@@ -275,6 +314,73 @@ namespace VeterinarySystem
             if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back)
             {
                 e.Handled = true;
+            }
+        }
+
+        // Owner name: allow letters, spaces and basic control characters (backspace)
+        private void txtOwnerName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // Allow letters and spaces only
+            if (!char.IsLetter(e.KeyChar) && !char.IsWhiteSpace(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        // Weight input: allow digits, one decimal separator ('.'), and enforce a maximum on leave
+        private void txtWeight_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            var tb = sender as TextBox;
+            if (tb == null)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // Allow digits
+            if (char.IsDigit(e.KeyChar))
+                return;
+
+            // Allow one decimal separator (.)
+            if (e.KeyChar == '.')
+            {
+                if (tb.Text.Contains('.'))
+                    e.Handled = true;
+                else if (tb.SelectionLength == tb.Text.Length) // replacing all text with "."
+                    e.Handled = true;
+                return;
+            }
+
+            // Otherwise reject
+            e.Handled = true;
+        }
+
+        private void txtWeight_Leave(object sender, EventArgs e)
+        {
+            var text = (txtWeight.Text ?? "").Trim();
+            if (text.Length == 0)
+                return;
+
+            if (!decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal weight))
+            {
+                MessageBox.Show("Please enter a valid numeric weight.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtWeight.Focus();
+                txtWeight.SelectAll();
+                return;
+            }
+
+            if (weight > MAX_WEIGHT_KG)
+            {
+                MessageBox.Show($"Weight cannot exceed {MAX_WEIGHT_KG} kg.", "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtWeight.Text = MAX_WEIGHT_KG.ToString(CultureInfo.InvariantCulture);
+                txtWeight.Focus();
+                txtWeight.SelectAll();
             }
         }
 

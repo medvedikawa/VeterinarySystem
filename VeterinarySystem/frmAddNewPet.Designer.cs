@@ -231,7 +231,7 @@
             txtAge.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtAge.Location = new Point(528, 93);
             txtAge.Name = "txtAge";
-            txtAge.Size = new Size(82, 29);
+            txtAge.Size = new Size(178, 29);
             txtAge.TabIndex = 13;
             // 
             // label5
