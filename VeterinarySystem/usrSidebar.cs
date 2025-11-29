@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace VeterinarySystem
@@ -16,15 +9,31 @@ namespace VeterinarySystem
         {
             InitializeComponent();
         }
+
         private void btnPetFrm_Click(object sender, EventArgs e)
         {
-            var PetSidebar = new PetSidebarBtn();
-            PetSidebar.Show();
+            var petSidebar = new PetSidebarBtn();
+
+            // Subscribe to the public AddClicked event (not the internal button).
+            petSidebar.AddClicked += (s, args) =>
+            {
+                var main = this.FindForm() as FrmMainDashboard;
+                if (main != null)
+                {
+                    main.ShowInPanel5(new uscAddPet());
+                }
+            };
+
+            petSidebar.Show();
         }
 
         private void btnAppointmentFrm_Click(object sender, EventArgs e)
         {
-
+            var main = this.FindForm() as FrmMainDashboard;
+            if (main != null)
+            {
+                main.ShowInPanel5(new uscAppointments());
+            }
         }
     }
 }
