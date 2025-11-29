@@ -410,7 +410,7 @@ namespace VeterinarySystem
 
         private void btnConfirm_Click(object sender, EventArgs e)
         {
-            // Prefer user-entered age if manual mode; otherwise use calculated
+            // Determine age (use manual if checked)
             if (chkManualAge != null && chkManualAge.Checked)
             {
                 if (!int.TryParse(txtAge.Text, out age))
@@ -420,7 +420,47 @@ namespace VeterinarySystem
                 }
             }
 
-            MessageBox.Show(age.ToString());
+            // Parse weight (optional)
+            decimal? weight = null;
+            var weightText = (txtWeight.Text ?? "").Trim();
+            if (weightText.Length > 0 && decimal.TryParse(weightText, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out decimal w))
+            {
+                weight = w;
+            }
+
+            // Convert image to bytes (optional)
+            byte[]? imageBytes = null;
+            if (pictureBox1.Image != null)
+            {
+                using var ms = new System.IO.MemoryStream();
+                // Save as PNG to preserve transparency where applicable
+                pictureBox1.Image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                imageBytes = ms.ToArray();
+            }
+
+            var pet = new VeterinarySystem.Models.PetRecord
+            {
+                PetName = txtPetName.Text.Trim(),
+                PetSpecies = cmbSpecies.SelectedItem as string ?? cmbSpecies.Text,
+                PetBreed = cmbBreeds.Text.Trim(),
+                DateOfBirth = dtBday.Enabled ? dtBday.Value.Date : (DateTime?)null,
+                PetAge = age,
+                PetWeight = weight,
+                MedicalHistory = txtMedicalHistory.Text,
+                PetImage = imageBytes,
+                OwnerName = txtOwnerName.Text.Trim(),
+                Address = txtAddress.Text.Trim(),
+                ContactNo = txtOwnerContactNo.Text.Trim(),
+                IsActive = true
+            };
+
+            using var confirm = new confirmEntry(pet);
+            var result = confirm.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                // optionally clear the form or close
+                this.Close();
+            }
         }
     }
 }
