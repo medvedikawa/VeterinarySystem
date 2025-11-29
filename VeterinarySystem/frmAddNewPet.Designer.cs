@@ -32,6 +32,8 @@
             txtPetName = new TextBox();
             label1 = new Label();
             panel1 = new Panel();
+            cmbGender = new ComboBox();
+            label11 = new Label();
             lblYorM = new Label();
             txtUnit = new Label();
             label10 = new Label();
@@ -72,7 +74,7 @@
             // txtPetName
             // 
             txtPetName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPetName.Location = new Point(157, 38);
+            txtPetName.Location = new Point(157, 15);
             txtPetName.Name = "txtPetName";
             txtPetName.Size = new Size(213, 29);
             txtPetName.TabIndex = 1;
@@ -82,7 +84,7 @@
             label1.AutoSize = true;
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(54, 42);
+            label1.Location = new Point(54, 19);
             label1.Name = "label1";
             label1.Size = new Size(84, 21);
             label1.TabIndex = 2;
@@ -91,6 +93,8 @@
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(237, 219, 186);
+            panel1.Controls.Add(cmbGender);
+            panel1.Controls.Add(label11);
             panel1.Controls.Add(lblYorM);
             panel1.Controls.Add(txtUnit);
             panel1.Controls.Add(label10);
@@ -118,12 +122,33 @@
             panel1.Size = new Size(796, 522);
             panel1.TabIndex = 3;
             // 
+            // cmbGender
+            // 
+            cmbGender.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cmbGender.FormattingEnabled = true;
+            cmbGender.Items.AddRange(new object[] { "Male", "Female" });
+            cmbGender.Location = new Point(349, 180);
+            cmbGender.Name = "cmbGender";
+            cmbGender.Size = new Size(121, 25);
+            cmbGender.TabIndex = 26;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.BackColor = Color.Transparent;
+            label11.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label11.Location = new Point(274, 182);
+            label11.Name = "label11";
+            label11.Size = new Size(69, 21);
+            label11.TabIndex = 25;
+            label11.Text = "Gender:";
+            // 
             // lblYorM
             // 
             lblYorM.AutoSize = true;
             lblYorM.Font = new Font("Segoe UI", 11.25F, FontStyle.Italic, GraphicsUnit.Point, 0);
             lblYorM.ForeColor = Color.SaddleBrown;
-            lblYorM.Location = new Point(616, 97);
+            lblYorM.Location = new Point(616, 74);
             lblYorM.Name = "lblYorM";
             lblYorM.Size = new Size(0, 20);
             lblYorM.TabIndex = 24;
@@ -133,7 +158,7 @@
             txtUnit.AutoSize = true;
             txtUnit.Font = new Font("Segoe UI", 11.25F, FontStyle.Italic, GraphicsUnit.Point, 0);
             txtUnit.ForeColor = Color.SaddleBrown;
-            txtUnit.Location = new Point(615, 152);
+            txtUnit.Location = new Point(615, 137);
             txtUnit.Name = "txtUnit";
             txtUnit.Size = new Size(24, 20);
             txtUnit.TabIndex = 23;
@@ -144,7 +169,7 @@
             label10.AutoSize = true;
             label10.BackColor = Color.Transparent;
             label10.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(470, 97);
+            label10.Location = new Point(470, 74);
             label10.Name = "label10";
             label10.Size = new Size(44, 21);
             label10.TabIndex = 22;
@@ -153,7 +178,7 @@
             // dtBday
             // 
             dtBday.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dtBday.Location = new Point(528, 40);
+            dtBday.Location = new Point(528, 17);
             dtBday.Name = "dtBday";
             dtBday.Size = new Size(222, 25);
             dtBday.TabIndex = 21;
@@ -220,7 +245,7 @@
             label6.AutoSize = true;
             label6.BackColor = Color.Transparent;
             label6.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(407, 42);
+            label6.Location = new Point(407, 19);
             label6.Name = "label6";
             label6.Size = new Size(107, 21);
             label6.TabIndex = 14;
@@ -229,7 +254,7 @@
             // txtAge
             // 
             txtAge.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtAge.Location = new Point(528, 93);
+            txtAge.Location = new Point(528, 70);
             txtAge.Name = "txtAge";
             txtAge.Size = new Size(178, 29);
             txtAge.TabIndex = 13;
@@ -239,7 +264,7 @@
             label5.AutoSize = true;
             label5.BackColor = Color.Transparent;
             label5.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(46, 205);
+            label5.Location = new Point(46, 212);
             label5.Name = "label5";
             label5.Size = new Size(130, 21);
             label5.TabIndex = 11;
@@ -248,7 +273,7 @@
             // txtMedicalHistory
             // 
             txtMedicalHistory.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtMedicalHistory.Location = new Point(46, 233);
+            txtMedicalHistory.Location = new Point(46, 240);
             txtMedicalHistory.Name = "txtMedicalHistory";
             txtMedicalHistory.Size = new Size(693, 202);
             txtMedicalHistory.TabIndex = 10;
@@ -259,7 +284,7 @@
             label4.AutoSize = true;
             label4.BackColor = Color.Transparent;
             label4.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(447, 151);
+            label4.Location = new Point(447, 136);
             label4.Name = "label4";
             label4.Size = new Size(67, 21);
             label4.TabIndex = 9;
@@ -268,7 +293,7 @@
             // txtWeight
             // 
             txtWeight.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtWeight.Location = new Point(527, 147);
+            txtWeight.Location = new Point(527, 132);
             txtWeight.Name = "txtWeight";
             txtWeight.Size = new Size(83, 29);
             txtWeight.TabIndex = 8;
@@ -277,7 +302,7 @@
             // 
             cmbBreeds.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cmbBreeds.FormattingEnabled = true;
-            cmbBreeds.Location = new Point(157, 146);
+            cmbBreeds.Location = new Point(157, 123);
             cmbBreeds.Name = "cmbBreeds";
             cmbBreeds.Size = new Size(213, 29);
             cmbBreeds.TabIndex = 7;
@@ -288,7 +313,7 @@
             label3.AutoSize = true;
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(53, 150);
+            label3.Location = new Point(53, 127);
             label3.Name = "label3";
             label3.Size = new Size(85, 21);
             label3.TabIndex = 6;
@@ -298,7 +323,7 @@
             // 
             cmbSpecies.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cmbSpecies.FormattingEnabled = true;
-            cmbSpecies.Location = new Point(157, 91);
+            cmbSpecies.Location = new Point(157, 68);
             cmbSpecies.Name = "cmbSpecies";
             cmbSpecies.Size = new Size(213, 29);
             cmbSpecies.TabIndex = 5;
@@ -309,7 +334,7 @@
             label2.AutoSize = true;
             label2.BackColor = Color.Transparent;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(41, 95);
+            label2.Location = new Point(41, 72);
             label2.Name = "label2";
             label2.Size = new Size(97, 21);
             label2.TabIndex = 4;
@@ -409,5 +434,7 @@
         private Label txtUnit;
         private Label label10;
         private Button btnUpload;
+        private ComboBox cmbGender;
+        private Label label11;
     }
 }

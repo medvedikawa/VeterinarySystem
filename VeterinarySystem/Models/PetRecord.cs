@@ -7,6 +7,7 @@ namespace VeterinarySystem.Models
         public string? PetName { get; set; }
         public string? PetSpecies { get; set; }
         public string? PetBreed { get; set; }
+        public string? PetGender { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public int? PetAge { get; set; }
         public decimal? PetWeight { get; set; }

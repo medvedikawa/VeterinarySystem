@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using VeterinarySystem.Models;
 
 namespace VeterinarySystem.Data
@@ -21,13 +20,14 @@ namespace VeterinarySystem.Data
             using var cmd = conn.CreateCommand();
             cmd.CommandText =
                 @"INSERT INTO petInfo
-                  (petName, petSpecies, petBreed, dateOfBirth, petAge, petWeight, medicalHistory, petImage, ownerName, address, contactNo, isActive)
+                  (petName, petSpecies, petBreed, petGender, dateOfBirth, petAge, petWeight, medicalHistory, petImage, ownerName, address, contactNo, isActive)
                   VALUES
-                  (@petName, @petSpecies, @petBreed, @dateOfBirth, @petAge, @petWeight, @medicalHistory, @petImage, @ownerName, @address, @contactNo, @isActive);";
+                  (@petName, @petSpecies, @petBreed, @petGender, @dateOfBirth, @petAge, @petWeight, @medicalHistory, @petImage, @ownerName, @address, @contactNo, @isActive);";
 
             cmd.Parameters.Add("@petName", SqlDbType.VarChar, 50).Value = (object?)pet.PetName ?? DBNull.Value;
             cmd.Parameters.Add("@petSpecies", SqlDbType.VarChar, 10).Value = (object?)pet.PetSpecies ?? DBNull.Value;
             cmd.Parameters.Add("@petBreed", SqlDbType.VarChar, 100).Value = (object?)pet.PetBreed ?? DBNull.Value;
+            cmd.Parameters.Add("@petGender", SqlDbType.VarChar, 10).Value = (object?)pet.PetGender ?? DBNull.Value;
             cmd.Parameters.Add("@dateOfBirth", SqlDbType.Date).Value = (object?)pet.DateOfBirth ?? DBNull.Value;
             cmd.Parameters.Add("@petAge", SqlDbType.SmallInt).Value = (object?)pet.PetAge ?? DBNull.Value;
             cmd.Parameters.Add("@petWeight", SqlDbType.Float).Value = (object?)pet.PetWeight ?? DBNull.Value;

@@ -34,6 +34,7 @@ namespace VeterinarySystem
             txtNameOwner.Text = _pet.OwnerName ?? string.Empty;
             txtAddress.Text = _pet.Address ?? string.Empty;
             txtContactNo.Text = _pet.ContactNo ?? string.Empty;
+            txtGender.Text = _pet.PetGender ?? string.Empty;
 
             if (_pet.PetImage != null && _pet.PetImage.Length > 0)
             {

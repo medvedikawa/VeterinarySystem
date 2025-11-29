@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            txtContactNo = new Label();
+            txtAddress = new Label();
+            txtNameOwner = new Label();
+            label7 = new Label();
+            label6 = new Label();
             label5 = new Label();
             txtMedHist = new Label();
             label3 = new Label();
@@ -42,14 +47,13 @@
             lblPetType = new Label();
             lblPetName = new Label();
             pictureBox1 = new PictureBox();
-            label6 = new Label();
-            label7 = new Label();
-            txtNameOwner = new Label();
-            txtAddress = new Label();
-            txtContactNo = new Label();
+            labelGenderLabel = new Label();
+            txtGender = new Label();
             label8 = new Label();
             btnYes = new Button();
             btnNo = new Button();
+            label9 = new Label();
+            lblGender = new Label();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -75,10 +79,67 @@
             panel1.Controls.Add(lblPetType);
             panel1.Controls.Add(lblPetName);
             panel1.Controls.Add(pictureBox1);
+            panel1.Controls.Add(labelGenderLabel);
+            panel1.Controls.Add(txtGender);
             panel1.Location = new Point(-1, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(993, 450);
             panel1.TabIndex = 0;
+            // 
+            // txtContactNo
+            // 
+            txtContactNo.AutoSize = true;
+            txtContactNo.BackColor = Color.Transparent;
+            txtContactNo.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtContactNo.Location = new Point(136, 394);
+            txtContactNo.Name = "txtContactNo";
+            txtContactNo.Size = new Size(58, 25);
+            txtContactNo.TabIndex = 19;
+            txtContactNo.Text = "blank";
+            // 
+            // txtAddress
+            // 
+            txtAddress.AutoSize = true;
+            txtAddress.BackColor = Color.Transparent;
+            txtAddress.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAddress.Location = new Point(136, 351);
+            txtAddress.Name = "txtAddress";
+            txtAddress.Size = new Size(58, 25);
+            txtAddress.TabIndex = 18;
+            txtAddress.Text = "blank";
+            // 
+            // txtNameOwner
+            // 
+            txtNameOwner.AutoSize = true;
+            txtNameOwner.BackColor = Color.Transparent;
+            txtNameOwner.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtNameOwner.Location = new Point(136, 308);
+            txtNameOwner.Name = "txtNameOwner";
+            txtNameOwner.Size = new Size(58, 25);
+            txtNameOwner.TabIndex = 17;
+            txtNameOwner.Text = "blank";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.BackColor = Color.Transparent;
+            label7.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.Location = new Point(15, 394);
+            label7.Name = "label7";
+            label7.Size = new Size(115, 25);
+            label7.TabIndex = 16;
+            label7.Text = "Contact No.";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.BackColor = Color.Transparent;
+            label6.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.Location = new Point(15, 351);
+            label6.Name = "label6";
+            label6.Size = new Size(85, 25);
+            label6.TabIndex = 15;
+            label6.Text = "Address:";
             // 
             // label5
             // 
@@ -107,7 +168,7 @@
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 11.25F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.SaddleBrown;
-            label3.Location = new Point(481, 104);
+            label3.Location = new Point(503, 104);
             label3.Name = "label3";
             label3.Size = new Size(24, 20);
             label3.TabIndex = 12;
@@ -133,7 +194,7 @@
             txtWeight.Name = "txtWeight";
             txtWeight.Size = new Size(35, 30);
             txtWeight.TabIndex = 10;
-            txtWeight.Text = "50";
+            txtWeight.Text = "00";
             // 
             // label4
             // 
@@ -151,7 +212,7 @@
             txtBday.AutoSize = true;
             txtBday.BackColor = Color.Transparent;
             txtBday.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtBday.Location = new Point(604, 41);
+            txtBday.Location = new Point(705, 41);
             txtBday.Name = "txtBday";
             txtBday.Size = new Size(95, 30);
             txtBday.TabIndex = 8;
@@ -162,7 +223,7 @@
             label1.AutoSize = true;
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(458, 41);
+            label1.Location = new Point(559, 41);
             label1.Name = "label1";
             label1.Size = new Size(142, 30);
             label1.TabIndex = 7;
@@ -177,7 +238,7 @@
             txtAge.Name = "txtAge";
             txtAge.Size = new Size(24, 30);
             txtAge.TabIndex = 6;
-            txtAge.Text = "7";
+            txtAge.Text = "0";
             // 
             // lblAge
             // 
@@ -227,60 +288,27 @@
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
-            // label6
+            // labelGenderLabel
             // 
-            label6.AutoSize = true;
-            label6.BackColor = Color.Transparent;
-            label6.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label6.Location = new Point(15, 351);
-            label6.Name = "label6";
-            label6.Size = new Size(85, 25);
-            label6.TabIndex = 15;
-            label6.Text = "Address:";
+            labelGenderLabel.AutoSize = true;
+            labelGenderLabel.BackColor = Color.Transparent;
+            labelGenderLabel.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelGenderLabel.Location = new Point(559, 96);
+            labelGenderLabel.Name = "labelGenderLabel";
+            labelGenderLabel.Size = new Size(89, 30);
+            labelGenderLabel.TabIndex = 21;
+            labelGenderLabel.Text = "Gender:";
             // 
-            // label7
+            // txtGender
             // 
-            label7.AutoSize = true;
-            label7.BackColor = Color.Transparent;
-            label7.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(15, 394);
-            label7.Name = "label7";
-            label7.Size = new Size(115, 25);
-            label7.TabIndex = 16;
-            label7.Text = "Contact No.";
-            // 
-            // txtNameOwner
-            // 
-            txtNameOwner.AutoSize = true;
-            txtNameOwner.BackColor = Color.Transparent;
-            txtNameOwner.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtNameOwner.Location = new Point(136, 308);
-            txtNameOwner.Name = "txtNameOwner";
-            txtNameOwner.Size = new Size(58, 25);
-            txtNameOwner.TabIndex = 17;
-            txtNameOwner.Text = "blank";
-            // 
-            // txtAddress
-            // 
-            txtAddress.AutoSize = true;
-            txtAddress.BackColor = Color.Transparent;
-            txtAddress.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtAddress.Location = new Point(136, 351);
-            txtAddress.Name = "txtAddress";
-            txtAddress.Size = new Size(58, 25);
-            txtAddress.TabIndex = 18;
-            txtAddress.Text = "blank";
-            // 
-            // txtContactNo
-            // 
-            txtContactNo.AutoSize = true;
-            txtContactNo.BackColor = Color.Transparent;
-            txtContactNo.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtContactNo.Location = new Point(136, 394);
-            txtContactNo.Name = "txtContactNo";
-            txtContactNo.Size = new Size(58, 25);
-            txtContactNo.TabIndex = 19;
-            txtContactNo.Text = "blank";
+            txtGender.AutoSize = true;
+            txtGender.BackColor = Color.Transparent;
+            txtGender.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtGender.Location = new Point(654, 96);
+            txtGender.Name = "txtGender";
+            txtGender.Size = new Size(63, 30);
+            txtGender.TabIndex = 22;
+            txtGender.Text = "blank";
             // 
             // label8
             // 
@@ -319,6 +347,28 @@
             btnNo.TabIndex = 23;
             btnNo.Text = "No";
             btnNo.UseVisualStyleBackColor = false;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.BackColor = Color.Transparent;
+            label9.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label9.Location = new Point(560, 96);
+            label9.Name = "label9";
+            label9.Size = new Size(89, 30);
+            label9.TabIndex = 20;
+            label9.Text = "Gender:";
+            // 
+            // lblGender
+            // 
+            lblGender.AutoSize = true;
+            lblGender.BackColor = Color.Transparent;
+            lblGender.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblGender.Location = new Point(655, 96);
+            lblGender.Name = "lblGender";
+            lblGender.Size = new Size(100, 30);
+            lblGender.TabIndex = 21;
+            lblGender.Text = "Unknown";
             // 
             // confirmEntry
             // 
@@ -363,5 +413,9 @@
         private Label label8;
         private Button btnYes;
         private Button btnNo;
+        private Label label9;
+        private Label lblGender;
+        private Label labelGenderLabel;
+        private Label txtGender;
     }
 }

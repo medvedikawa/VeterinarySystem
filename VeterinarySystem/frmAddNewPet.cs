@@ -82,20 +82,23 @@ namespace VeterinarySystem
             // --- IMPORTANT: wire the ValueChanged handler (designer didn't) ---
             dtBday.ValueChanged += dtpDOB_ValueChanged;
 
-            // Create the "Enter age manually" checkbox at runtime (keeps Designer clean)
+            // Create the "Add age manually" checkbox at runtime (keeps Designer clean)
             chkManualAge = new CheckBox
             {
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9.0F, FontStyle.Regular, GraphicsUnit.Point),
-                Location = new Point(528, 128), // place near the age textbox
                 Name = "chkManualAge",
-                Text = "Enter age manually",
+                Text = "Add age manually",
                 UseVisualStyleBackColor = true
             };
+
+            // Place it directly under the Age textbox so it stays aligned with the Designer layout
+            chkManualAge.Location = new Point(txtAge.Left, txtAge.Bottom + 6);
             chkManualAge.CheckedChanged += chkManualAge_CheckedChanged;
 
             // Add it to the same panel so layout stays consistent
             panel1.Controls.Add(chkManualAge);
+            panel1.Controls.SetChildIndex(chkManualAge, panel1.Controls.GetChildIndex(txtAge) + 1);
 
             // Default: DOB mode (age auto-calculated)
             txtAge.ReadOnly = true;
@@ -111,6 +114,20 @@ namespace VeterinarySystem
 
             // Populate the age textbox once immediately
             dtpDOB_ValueChanged(dtBday, EventArgs.Empty);
+
+            // Enforce DropDownList for combos and populate gender options if needed
+            cmbSpecies.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbBreeds.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbGender.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            // Optionally populate gender choices if Designer left it empty
+            if (cmbGender.Items.Count == 0)
+            {
+                cmbGender.Items.AddRange(new[] { "Male", "Female", "Unknown" });
+                cmbGender.SelectedIndex = -1;
+            }
+
+            // Keep species/breed selection default behavior (you already populate breeds on species change)
         }
 
         private void LoadDogBreeds()
@@ -330,7 +347,7 @@ namespace VeterinarySystem
             }
         }
 
-        // Weight input: allow digits, one decimal separator ('.'), and enforce a maximum on leave
+        // Replace txtWeight_KeyPress with culture-aware decimal handling
         private void txtWeight_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsControl(e.KeyChar))
@@ -347,17 +364,19 @@ namespace VeterinarySystem
             if (char.IsDigit(e.KeyChar))
                 return;
 
-            // Allow one decimal separator (.)
-            if (e.KeyChar == '.')
+            // Allow one decimal separator using current culture
+            var decSep = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            char decChar = decSep.Length > 0 ? decSep[0] : '.';
+
+            if (e.KeyChar == decChar)
             {
-                if (tb.Text.Contains('.'))
+                if (tb.Text.Contains(decChar))
                     e.Handled = true;
-                else if (tb.SelectionLength == tb.Text.Length) // replacing all text with "."
+                else if (tb.SelectionLength == tb.Text.Length && tb.SelectionLength > 0) // replacing all text with decimal char
                     e.Handled = true;
                 return;
             }
 
-            // Otherwise reject
             e.Handled = true;
         }
 
@@ -442,7 +461,8 @@ namespace VeterinarySystem
             {
                 PetName = txtPetName.Text.Trim(),
                 PetSpecies = cmbSpecies.SelectedItem as string ?? cmbSpecies.Text,
-                PetBreed = cmbBreeds.Text.Trim(),
+                PetBreed = cmbBreeds.SelectedItem as string ?? cmbBreeds.Text,
+                PetGender = cmbGender.SelectedItem as string ?? cmbGender.Text,
                 DateOfBirth = dtBday.Enabled ? dtBday.Value.Date : (DateTime?)null,
                 PetAge = age,
                 PetWeight = weight,
