@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using VeterinarySystem.Data;  // ADD THIS LINE!
 
 namespace VeterinarySystem
 {
@@ -8,13 +9,38 @@ namespace VeterinarySystem
         public usrSidebar()
         {
             InitializeComponent();
+            LoadRecentPets(); // ADD THIS LINE!
+        }
+
+        // ADD THIS ENTIRE METHOD:
+        private void LoadRecentPets()
+        {
+            try
+            {
+                petGridWillAppear.Controls.Clear();
+
+                var recentPets = PetRepository.GetRecentPets(4); // Gets top 4 recent pets
+
+                Console.WriteLine($"Loading {recentPets.Count} recent pets");
+
+                foreach (var pet in recentPets)
+                {
+                    var petControl = new petGrid();
+                    petControl.SetPetData(pet); // THIS is the method name!
+                    petGridWillAppear.Controls.Add(petControl);
+                    Console.WriteLine($"Added pet: {pet.PetName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading pets: {ex.Message}");
+                MessageBox.Show($"Error: {ex.Message}");
+            }
         }
 
         private void btnPetFrm_Click(object sender, EventArgs e)
         {
             var petSidebar = new PetSidebarBtn();
-
-            // Subscribe to the public AddClicked event (not the internal button).
             petSidebar.AddClicked += (s, args) =>
             {
                 var main = this.FindForm() as FrmMainDashboard;
@@ -23,7 +49,6 @@ namespace VeterinarySystem
                     main.ShowInPanel5(new uscAddPet());
                 }
             };
-
             petSidebar.Show();
         }
 
