@@ -30,6 +30,16 @@
         {
             btnBack = new Button();
             panelMain = new Panel();
+            txtContact = new Label();
+            label12 = new Label();
+            txtAddress = new Label();
+            label8 = new Label();
+            txtOwner = new Label();
+            label3 = new Label();
+            label11 = new Label();
+            panel1 = new Panel();
+            txtMedHist = new Label();
+            label7 = new Label();
             txtWeight = new Label();
             label6 = new Label();
             txtDob = new Label();
@@ -46,19 +56,11 @@
             pbPetPicture = new PictureBox();
             btnEdit = new Button();
             btnDelete = new Button();
-            label7 = new Label();
-            panel1 = new Panel();
-            txtMedHist = new Label();
-            label11 = new Label();
-            label3 = new Label();
-            txtOwner = new Label();
-            label8 = new Label();
-            txtAddress = new Label();
-            txtContact = new Label();
-            label12 = new Label();
+            labelGenderLabel = new Label();
+            txtGender = new Label();
             panelMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pbPetPicture).BeginInit();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbPetPicture).BeginInit();
             SuspendLayout();
             // 
             // btnBack
@@ -79,6 +81,8 @@
             // panelMain
             // 
             panelMain.BackColor = Color.FromArgb(237, 219, 186);
+            panelMain.Controls.Add(labelGenderLabel);
+            panelMain.Controls.Add(txtGender);
             panelMain.Controls.Add(txtContact);
             panelMain.Controls.Add(label12);
             panelMain.Controls.Add(txtAddress);
@@ -108,11 +112,106 @@
             panelMain.Size = new Size(1233, 597);
             panelMain.TabIndex = 1;
             // 
+            // txtContact
+            // 
+            txtContact.AutoSize = true;
+            txtContact.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtContact.Location = new Point(924, 511);
+            txtContact.Name = "txtContact";
+            txtContact.Size = new Size(101, 30);
+            txtContact.TabIndex = 30;
+            txtContact.Text = "09099999";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(921, 478);
+            label12.Name = "label12";
+            label12.Size = new Size(128, 30);
+            label12.TabIndex = 29;
+            label12.Text = "Contact No.";
+            // 
+            // txtAddress
+            // 
+            txtAddress.AutoSize = true;
+            txtAddress.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtAddress.Location = new Point(675, 511);
+            txtAddress.Name = "txtAddress";
+            txtAddress.Size = new Size(110, 30);
+            txtAddress.TabIndex = 28;
+            txtAddress.Text = "21st Street";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(672, 478);
+            label8.Name = "label8";
+            label8.Size = new Size(90, 30);
+            label8.TabIndex = 27;
+            label8.Text = "Address";
+            // 
+            // txtOwner
+            // 
+            txtOwner.AutoSize = true;
+            txtOwner.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtOwner.Location = new Point(457, 511);
+            txtOwner.Name = "txtOwner";
+            txtOwner.Size = new Size(35, 30);
+            txtOwner.TabIndex = 26;
+            txtOwner.Text = "00";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(454, 478);
+            label3.Name = "label3";
+            label3.Size = new Size(76, 30);
+            label3.TabIndex = 25;
+            label3.Text = "Owner";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 11.25F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label11.ForeColor = Color.SaddleBrown;
+            label11.Location = new Point(584, 106);
+            label11.Name = "label11";
+            label11.Size = new Size(24, 20);
+            label11.TabIndex = 24;
+            label11.Text = "kg";
+            // 
+            // panel1
+            // 
+            panel1.BackColor = Color.White;
+            panel1.Controls.Add(txtMedHist);
+            panel1.Location = new Point(454, 209);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(625, 213);
+            panel1.TabIndex = 15;
+            // 
+            // txtMedHist
+            // 
+            txtMedHist.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtMedHist.Location = new Point(0, 0);
+            txtMedHist.Name = "txtMedHist";
+            txtMedHist.Size = new Size(625, 213);
+            txtMedHist.TabIndex = 12;
+            txtMedHist.Text = "Empty!";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(454, 164);
+            label7.Name = "label7";
+            label7.Size = new Size(163, 30);
+            label7.TabIndex = 14;
+            label7.Text = "Medical History";
+            // 
             // txtWeight
             // 
             txtWeight.AutoSize = true;
             txtWeight.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtWeight.Location = new Point(445, 99);
+            txtWeight.Location = new Point(546, 99);
             txtWeight.Name = "txtWeight";
             txtWeight.Size = new Size(35, 30);
             txtWeight.TabIndex = 13;
@@ -121,7 +220,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(353, 99);
+            label6.Location = new Point(454, 99);
             label6.Name = "label6";
             label6.Size = new Size(86, 30);
             label6.TabIndex = 12;
@@ -131,7 +230,7 @@
             // 
             txtDob.AutoSize = true;
             txtDob.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtDob.Location = new Point(702, 32);
+            txtDob.Location = new Point(803, 32);
             txtDob.Name = "txtDob";
             txtDob.Size = new Size(95, 30);
             txtDob.TabIndex = 11;
@@ -140,7 +239,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(554, 32);
+            label5.Location = new Point(655, 32);
             label5.Name = "label5";
             label5.Size = new Size(142, 30);
             label5.TabIndex = 10;
@@ -150,7 +249,7 @@
             // 
             txtPetAge.AutoSize = true;
             txtPetAge.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPetAge.Location = new Point(415, 32);
+            txtPetAge.Location = new Point(516, 32);
             txtPetAge.Name = "txtPetAge";
             txtPetAge.Size = new Size(35, 30);
             txtPetAge.TabIndex = 9;
@@ -159,7 +258,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(353, 32);
+            label4.Location = new Point(454, 32);
             label4.Name = "label4";
             label4.Size = new Size(56, 30);
             label4.TabIndex = 8;
@@ -170,7 +269,7 @@
             btnViewHistory.BackColor = Color.FromArgb(224, 224, 224);
             btnViewHistory.FlatStyle = FlatStyle.Flat;
             btnViewHistory.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnViewHistory.Location = new Point(28, 523);
+            btnViewHistory.Location = new Point(129, 523);
             btnViewHistory.Name = "btnViewHistory";
             btnViewHistory.Size = new Size(127, 31);
             btnViewHistory.TabIndex = 7;
@@ -182,7 +281,7 @@
             // 
             txtLastApp.AutoSize = true;
             txtLastApp.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtLastApp.Location = new Point(28, 478);
+            txtLastApp.Location = new Point(129, 478);
             txtLastApp.Name = "txtLastApp";
             txtLastApp.Size = new Size(42, 21);
             txtLastApp.TabIndex = 6;
@@ -192,7 +291,7 @@
             // 
             txtUpcomingApp.AutoSize = true;
             txtUpcomingApp.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtUpcomingApp.Location = new Point(28, 393);
+            txtUpcomingApp.Location = new Point(129, 393);
             txtUpcomingApp.Name = "txtUpcomingApp";
             txtUpcomingApp.Size = new Size(42, 21);
             txtUpcomingApp.TabIndex = 5;
@@ -202,7 +301,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label2.Location = new Point(28, 360);
+            label2.Location = new Point(129, 360);
             label2.Name = "label2";
             label2.Size = new Size(186, 21);
             label2.TabIndex = 4;
@@ -212,7 +311,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label1.Location = new Point(28, 445);
+            label1.Location = new Point(129, 445);
             label1.Name = "label1";
             label1.Size = new Size(143, 21);
             label1.TabIndex = 3;
@@ -223,7 +322,7 @@
             txtPetType.Anchor = AnchorStyles.None;
             txtPetType.AutoSize = true;
             txtPetType.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtPetType.Location = new Point(71, 313);
+            txtPetType.Location = new Point(172, 313);
             txtPetType.Name = "txtPetType";
             txtPetType.Size = new Size(132, 25);
             txtPetType.TabIndex = 2;
@@ -234,7 +333,7 @@
             // 
             lblPetName.AutoSize = true;
             lblPetName.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPetName.Location = new Point(94, 274);
+            lblPetName.Location = new Point(195, 274);
             lblPetName.Name = "lblPetName";
             lblPetName.Size = new Size(87, 32);
             lblPetName.TabIndex = 1;
@@ -246,7 +345,7 @@
             pbPetPicture.ErrorImage = Properties.Resources.placeholderPetImage;
             pbPetPicture.Image = Properties.Resources.placeholderPetImage;
             pbPetPicture.InitialImage = Properties.Resources.placeholderPetImage;
-            pbPetPicture.Location = new Point(25, 23);
+            pbPetPicture.Location = new Point(126, 23);
             pbPetPicture.Name = "pbPetPicture";
             pbPetPicture.Size = new Size(237, 240);
             pbPetPicture.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -283,100 +382,27 @@
             btnDelete.UseVisualStyleBackColor = false;
             btnDelete.Click += btnDelete_Click;
             // 
-            // label7
+            // labelGenderLabel
             // 
-            label7.AutoSize = true;
-            label7.Location = new Point(353, 164);
-            label7.Name = "label7";
-            label7.Size = new Size(163, 30);
-            label7.TabIndex = 14;
-            label7.Text = "Medical History";
+            labelGenderLabel.AutoSize = true;
+            labelGenderLabel.BackColor = Color.Transparent;
+            labelGenderLabel.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelGenderLabel.Location = new Point(655, 99);
+            labelGenderLabel.Name = "labelGenderLabel";
+            labelGenderLabel.Size = new Size(89, 30);
+            labelGenderLabel.TabIndex = 23;
+            labelGenderLabel.Text = "Gender:";
             // 
-            // panel1
+            // txtGender
             // 
-            panel1.BackColor = Color.White;
-            panel1.Controls.Add(txtMedHist);
-            panel1.Location = new Point(353, 209);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(625, 213);
-            panel1.TabIndex = 15;
-            // 
-            // txtMedHist
-            // 
-            txtMedHist.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtMedHist.Location = new Point(0, 0);
-            txtMedHist.Name = "txtMedHist";
-            txtMedHist.Size = new Size(625, 213);
-            txtMedHist.TabIndex = 12;
-            txtMedHist.Text = "Empty!";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Font = new Font("Segoe UI", 11.25F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            label11.ForeColor = Color.SaddleBrown;
-            label11.Location = new Point(483, 106);
-            label11.Name = "label11";
-            label11.Size = new Size(24, 20);
-            label11.TabIndex = 24;
-            label11.Text = "kg";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(353, 478);
-            label3.Name = "label3";
-            label3.Size = new Size(76, 30);
-            label3.TabIndex = 25;
-            label3.Text = "Owner";
-            // 
-            // txtOwner
-            // 
-            txtOwner.AutoSize = true;
-            txtOwner.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtOwner.Location = new Point(356, 511);
-            txtOwner.Name = "txtOwner";
-            txtOwner.Size = new Size(35, 30);
-            txtOwner.TabIndex = 26;
-            txtOwner.Text = "00";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(571, 478);
-            label8.Name = "label8";
-            label8.Size = new Size(90, 30);
-            label8.TabIndex = 27;
-            label8.Text = "Address";
-            // 
-            // txtAddress
-            // 
-            txtAddress.AutoSize = true;
-            txtAddress.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtAddress.Location = new Point(574, 511);
-            txtAddress.Name = "txtAddress";
-            txtAddress.Size = new Size(110, 30);
-            txtAddress.TabIndex = 28;
-            txtAddress.Text = "21st Street";
-            // 
-            // txtContact
-            // 
-            txtContact.AutoSize = true;
-            txtContact.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtContact.Location = new Point(823, 511);
-            txtContact.Name = "txtContact";
-            txtContact.Size = new Size(101, 30);
-            txtContact.TabIndex = 30;
-            txtContact.Text = "09099999";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(820, 478);
-            label12.Name = "label12";
-            label12.Size = new Size(128, 30);
-            label12.TabIndex = 29;
-            label12.Text = "Contact No.";
+            txtGender.AutoSize = true;
+            txtGender.BackColor = Color.Transparent;
+            txtGender.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtGender.Location = new Point(750, 99);
+            txtGender.Name = "txtGender";
+            txtGender.Size = new Size(63, 30);
+            txtGender.TabIndex = 24;
+            txtGender.Text = "blank";
             // 
             // uscViewPet
             // 
@@ -391,8 +417,8 @@
             Size = new Size(1233, 662);
             panelMain.ResumeLayout(false);
             panelMain.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pbPetPicture).EndInit();
             panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pbPetPicture).EndInit();
             ResumeLayout(false);
         }
 
@@ -426,5 +452,7 @@
         private Label label8;
         private Label txtOwner;
         private Label label3;
+        private Label labelGenderLabel;
+        private Label txtGender;
     }
 }

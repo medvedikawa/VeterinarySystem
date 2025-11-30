@@ -36,12 +36,18 @@
             btnPetFrm = new Button();
             panel4 = new Panel();
             btnAppointmentFrm = new Button();
-            panel1 = new Panel();
+            mainPanel = new Panel();
+            label1 = new Label();
+            petGridWillAppear = new FlowLayoutPanel();
+            petGrid1 = new petGrid();
+            dashCalendar1 = new dashCalendar();
             flowLayoutPanel1.SuspendLayout();
             pnlTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictrLogo).BeginInit();
             panel3.SuspendLayout();
             panel4.SuspendLayout();
+            mainPanel.SuspendLayout();
+            petGridWillAppear.SuspendLayout();
             SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -139,18 +145,56 @@
             btnAppointmentFrm.UseVisualStyleBackColor = false;
             btnAppointmentFrm.Click += btnAppointmentFrm_Click;
             // 
-            // panel1
+            // mainPanel
             // 
-            panel1.Location = new Point(286, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(947, 662);
-            panel1.TabIndex = 2;
+            mainPanel.BackColor = Color.FromArgb(237, 219, 186);
+            mainPanel.Controls.Add(label1);
+            mainPanel.Controls.Add(petGridWillAppear);
+            mainPanel.Controls.Add(dashCalendar1);
+            mainPanel.Location = new Point(283, 0);
+            mainPanel.Name = "mainPanel";
+            mainPanel.Size = new Size(950, 662);
+            mainPanel.TabIndex = 2;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(25, 362);
+            label1.Name = "label1";
+            label1.Size = new Size(173, 30);
+            label1.TabIndex = 2;
+            label1.Text = "Recently Added:";
+            // 
+            // petGridWillAppear
+            // 
+            petGridWillAppear.Controls.Add(petGrid1);
+            petGridWillAppear.Location = new Point(0, 409);
+            petGridWillAppear.Name = "petGridWillAppear";
+            petGridWillAppear.Size = new Size(950, 217);
+            petGridWillAppear.TabIndex = 1;
+            // 
+            // petGrid1
+            // 
+            petGrid1.Location = new Point(3, 3);
+            petGrid1.Name = "petGrid1";
+            petGrid1.Size = new Size(190, 208);
+            petGrid1.TabIndex = 0;
+            // 
+            // dashCalendar1
+            // 
+            dashCalendar1.BackColor = Color.FromArgb(240, 242, 245);
+            dashCalendar1.Location = new Point(-1, -11);
+            dashCalendar1.Name = "dashCalendar1";
+            dashCalendar1.Padding = new Padding(20);
+            dashCalendar1.Size = new Size(950, 350);
+            dashCalendar1.TabIndex = 0;
             // 
             // usrSidebar
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(panel1);
+            Controls.Add(mainPanel);
             Controls.Add(flowLayoutPanel1);
             Name = "usrSidebar";
             Size = new Size(1233, 662);
@@ -160,6 +204,9 @@
             ((System.ComponentModel.ISupportInitialize)pictrLogo).EndInit();
             panel3.ResumeLayout(false);
             panel4.ResumeLayout(false);
+            mainPanel.ResumeLayout(false);
+            mainPanel.PerformLayout();
+            petGridWillAppear.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -173,6 +220,10 @@
         private Button btnPetFrm;
         private Panel panel4;
         private Button btnAppointmentFrm;
-        private Panel panel1;
+        private Panel mainPanel;
+        private dashCalendar dashCalendar1;
+        private FlowLayoutPanel petGridWillAppear;
+        private Label label1;
+        private petGrid petGrid1;
     }
 }

@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace VeterinarySystem
 {
-    public partial class viewPetRecord : UserControl
+    public partial class searchFunction : UserControl
     {
-        public viewPetRecord()
+        public searchFunction()
         {
             InitializeComponent();
         }
