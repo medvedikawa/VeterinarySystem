@@ -42,43 +42,50 @@ namespace VeterinarySystem.Data
             cmd.ExecuteNonQuery();
         }
 
-        // ⭐ NEW: Get the 4 most recently added pets (ordered by most recent first)
+        // ⭐ FIX: Ensure GetRecentPets handles edge cases
         public static List<PetRecord> GetRecentPets(int count = 4)
         {
             var list = new List<PetRecord>();
 
-            using var conn = new SqlConnection(ConnectionString);
-            conn.Open();
-
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = $@"
-                SELECT TOP {count} 
-                    petID, petName, petSpecies, petBreed, petGender, dateOfBirth, 
-                    petAge, petWeight, medicalHistory, petImage, ownerName, address, 
-                    contactNo, isActive
-                FROM dbo.petInfo
-                ORDER BY petID DESC;";
-
-            using var rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-            while (rdr.Read())
+            try
             {
-                var pet = new PetRecord
+                using var conn = new SqlConnection(ConnectionString);
+                conn.Open();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = $@"
+                    SELECT TOP {count} 
+                        petID, petName, petSpecies, petBreed, petGender, dateOfBirth, 
+                        petAge, petWeight, medicalHistory, petImage, ownerName, address, 
+                        contactNo, isActive
+                    FROM dbo.petInfo
+                    ORDER BY petID DESC;";
+
+                using var rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                while (rdr.Read())
                 {
-                    PetName = rdr.IsDBNull(1) ? string.Empty : rdr.GetString(1),
-                    PetSpecies = rdr.IsDBNull(2) ? string.Empty : rdr.GetString(2),
-                    PetBreed = rdr.IsDBNull(3) ? string.Empty : rdr.GetString(3),
-                    PetGender = rdr.IsDBNull(4) ? string.Empty : rdr.GetString(4),
-                    DateOfBirth = rdr.IsDBNull(5) ? (DateTime?)null : rdr.GetDateTime(5),
-                    PetAge = rdr.IsDBNull(6) ? (int?)null : rdr.GetInt16(6),
-                    PetWeight = rdr.IsDBNull(7) ? (decimal?)null : (decimal)rdr.GetDouble(7),
-                    MedicalHistory = rdr.IsDBNull(8) ? string.Empty : rdr.GetString(8),
-                    PetImage = rdr.IsDBNull(9) ? null : (byte[])rdr.GetValue(9),
-                    OwnerName = rdr.IsDBNull(10) ? string.Empty : rdr.GetString(10),
-                    Address = rdr.IsDBNull(11) ? string.Empty : rdr.GetString(11),
-                    ContactNo = rdr.IsDBNull(12) ? string.Empty : rdr.GetString(12),
-                    IsActive = rdr.IsDBNull(13) ? true : rdr.GetBoolean(13)
-                };
-                list.Add(pet);
+                    var pet = new PetRecord
+                    {
+                        PetName = rdr.IsDBNull(1) ? string.Empty : rdr.GetString(1),
+                        PetSpecies = rdr.IsDBNull(2) ? string.Empty : rdr.GetString(2),
+                        PetBreed = rdr.IsDBNull(3) ? string.Empty : rdr.GetString(3),
+                        PetGender = rdr.IsDBNull(4) ? string.Empty : rdr.GetString(4),
+                        DateOfBirth = rdr.IsDBNull(5) ? (DateTime?)null : rdr.GetDateTime(5),
+                        PetAge = rdr.IsDBNull(6) ? (int?)null : rdr.GetInt16(6),
+                        PetWeight = rdr.IsDBNull(7) ? (decimal?)null : (decimal)rdr.GetDouble(7),
+                        MedicalHistory = rdr.IsDBNull(8) ? string.Empty : rdr.GetString(8),
+                        PetImage = rdr.IsDBNull(9) ? null : (byte[])rdr.GetValue(9),
+                        OwnerName = rdr.IsDBNull(10) ? string.Empty : rdr.GetString(10),
+                        Address = rdr.IsDBNull(11) ? string.Empty : rdr.GetString(11),
+                        ContactNo = rdr.IsDBNull(12) ? string.Empty : rdr.GetString(12),
+                        IsActive = rdr.IsDBNull(13) ? true : rdr.GetBoolean(13)
+                    };
+                    list.Add(pet);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading recent pets: {ex.Message}");
             }
 
             return list;

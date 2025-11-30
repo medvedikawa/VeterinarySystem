@@ -146,8 +146,8 @@
             // mainPanel
             // 
             mainPanel.BackColor = Color.FromArgb(237, 219, 186);
-            mainPanel.Controls.Add(label1);
             mainPanel.Controls.Add(petGridWillAppear);
+            mainPanel.Controls.Add(label1);
             mainPanel.Controls.Add(dashCalendar1);
             mainPanel.Location = new Point(283, 0);
             mainPanel.Name = "mainPanel";

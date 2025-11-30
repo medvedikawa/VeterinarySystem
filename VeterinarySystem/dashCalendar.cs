@@ -111,7 +111,7 @@ namespace VeterinarySystem
             };
             timelinePanel.Paint += DrawRoundedCard;
 
-            // ⭐ NEW: Recently Added Pets Section
+            // ⭐ Recently Added Pets Section
             lblRecentlyAdded = new Label
             {
                 Text = "Recently Added:",
@@ -126,12 +126,13 @@ namespace VeterinarySystem
             {
                 Location = new Point(20, 400),
                 Size = new Size(420, 200),
-                BackColor = Color.Transparent,
+                BackColor = Color.White,
                 FlowDirection = FlowDirection.LeftToRight,
                 WrapContents = true,
                 AutoScroll = true,
                 Padding = new Padding(5)
             };
+            petGridWillAppear.Paint += DrawRoundedCard;
 
             // Add appointment button
             btnAddAppointment = new Button
@@ -155,7 +156,12 @@ namespace VeterinarySystem
                 btnAddAppointment.Region = new Region(path);
             };
 
-            this.Controls.AddRange(new Control[] { timelinePanel, calendarCard, lblRecentlyAdded, petGridWillAppear, btnAddAppointment });
+            // Add all controls - ORDER MATTERS for z-ordering!
+            this.Controls.Add(petGridWillAppear);      // Add first (bottom layer)
+            this.Controls.Add(lblRecentlyAdded);        // Label for pets
+            this.Controls.Add(timelinePanel);           // Timeline on left
+            this.Controls.Add(calendarCard);            // Calendar on right
+            this.Controls.Add(btnAddAppointment);       // Button on top
 
             this.Resize += (s, e) => UpdateLayout();
             UpdateLayout();
@@ -208,8 +214,10 @@ namespace VeterinarySystem
             weekDaysPanel.Location = new Point(10, 50);
             weekDaysPanel.Size = new Size(calendarCard.Width - 20, 30);
 
-            // Position "Recently Added" and petGridWillAppear
+            // ⭐ KEY FIX: Position pets below the calendar card
             lblRecentlyAdded.Location = new Point(calendarCard.Left, calendarCard.Bottom + 20);
+            lblRecentlyAdded.Width = calendarCard.Width;
+            
             petGridWillAppear.Location = new Point(calendarCard.Left, lblRecentlyAdded.Bottom + 8);
             petGridWillAppear.Size = new Size(calendarCard.Width, 200);
 
@@ -259,7 +267,6 @@ namespace VeterinarySystem
 
                 var date = new DateTime(selectedDate.Year, selectedDate.Month, day);
                 bool isToday = date.Date == DateTime.Today;
-                bool isSelected = date.Date == selectedDate.Date;
 
                 var dayBtn = new Button
                 {
@@ -470,7 +477,7 @@ namespace VeterinarySystem
             RefreshTimeline();
         }
 
-        // ⭐ NEW: Load recent pets and populate the flow panel
+        // ⭐ Load recent pets and populate the flow panel
         private void LoadRecentPets()
         {
             try
@@ -478,16 +485,33 @@ namespace VeterinarySystem
                 petGridWillAppear.Controls.Clear();
                 var recentPets = PetRepository.GetRecentPets(4);
 
+                System.Diagnostics.Debug.WriteLine($"Loaded {recentPets.Count} recent pets");
+
+                if (recentPets == null || recentPets.Count == 0)
+                {
+                    var lblNoPets = new Label
+                    {
+                        Text = "No pets yet",
+                        ForeColor = Color.Gray,
+                        AutoSize = true,
+                        Padding = new Padding(10)
+                    };
+                    petGridWillAppear.Controls.Add(lblNoPets);
+                    return;
+                }
+
                 foreach (var pet in recentPets)
                 {
                     var grid = new petGrid();
                     grid.SetPetData(pet);
                     petGridWillAppear.Controls.Add(grid);
+                    System.Diagnostics.Debug.WriteLine($"Added pet: {pet.PetName}");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to load recent pets: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine($"Error loading pets: {ex.Message}\n{ex.StackTrace}");
+                MessageBox.Show($"Failed to load recent pets: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
