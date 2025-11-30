@@ -1,13 +1,12 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CalendarTest;
 
 namespace VeterinarySystem
 {
     public class uscAppointments : UserControl
     {
-        private CalendarControl _calendar;
+        private Calendar.CalendarControl _calendar;
         private Button _btnBack;
         private Panel _topPanel;
         private Label _lblTitle;
@@ -20,35 +19,48 @@ namespace VeterinarySystem
         private void InitializeComponents()
         {
             this.Dock = DockStyle.Fill;
+            // Orange theme background
+            this.BackColor = Color.FromArgb(255, 245, 230);
 
             _topPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 48,
-                BackColor = Color.FromArgb(240, 240, 240)
+                Height = 60,
+                BackColor = Color.FromArgb(230, 126, 34) // Warm orange
             };
 
             _lblTitle = new Label
             {
-                Text = "Appointments",
-                AutoSize = true,
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point),
-                Location = new Point(12, 12)
+                Text = "📅 Appointments",
+                AutoSize = false,
+                Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point),
+                Location = new Point(20, 12),
+                Size = new Size(300, 36),
+                ForeColor = Color.White,
+                BackColor = Color.Transparent
             };
 
             _btnBack = new Button
             {
-                Text = "Back",
-                AutoSize = true,
-                Location = new Point(this.Width - 90, 10),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
+                Text = "← Back",
+                AutoSize = false,
+                Location = new Point(this.Width - 110, 13),
+                Size = new Size(95, 34),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                BackColor = Color.FromArgb(210, 105, 30), // Darker orange
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
             };
+            _btnBack.FlatAppearance.BorderSize = 0;
+            _btnBack.FlatAppearance.MouseOverBackColor = Color.FromArgb(180, 85, 20);
             _btnBack.Click += BtnBack_Click;
 
             _topPanel.Controls.Add(_lblTitle);
             _topPanel.Controls.Add(_btnBack);
 
-            _calendar = new CalendarControl
+            _calendar = new Calendar.CalendarControl
             {
                 Dock = DockStyle.Fill
             };

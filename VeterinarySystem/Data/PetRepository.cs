@@ -1,14 +1,15 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using VeterinarySystem.Models;
 
 namespace VeterinarySystem.Data
 {
     public static class PetRepository
     {
-        // Adjust this connection string only if you want SQL authentication.
-        private const string ConnectionString = "Server=localhost\\SQLEXPRESS;Database=VetClinic;Trusted_Connection=True;";
+        // Using Microsoft.Data.SqlClient with TrustServerCertificate enabled
+        private const string ConnectionString = "Server=localhost\\SQLEXPRESS;Database=VetClinic;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public static void Save(PetRecord pet)
         {
@@ -39,6 +40,48 @@ namespace VeterinarySystem.Data
             cmd.Parameters.Add("@isActive", SqlDbType.Bit).Value = pet.IsActive;
 
             cmd.ExecuteNonQuery();
+        }
+
+        // ⭐ NEW: Get the 4 most recently added pets (ordered by most recent first)
+        public static List<PetRecord> GetRecentPets(int count = 4)
+        {
+            var list = new List<PetRecord>();
+
+            using var conn = new SqlConnection(ConnectionString);
+            conn.Open();
+
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $@"
+                SELECT TOP {count} 
+                    petID, petName, petSpecies, petBreed, petGender, dateOfBirth, 
+                    petAge, petWeight, medicalHistory, petImage, ownerName, address, 
+                    contactNo, isActive
+                FROM dbo.petInfo
+                ORDER BY petID DESC;";
+
+            using var rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+            while (rdr.Read())
+            {
+                var pet = new PetRecord
+                {
+                    PetName = rdr.IsDBNull(1) ? string.Empty : rdr.GetString(1),
+                    PetSpecies = rdr.IsDBNull(2) ? string.Empty : rdr.GetString(2),
+                    PetBreed = rdr.IsDBNull(3) ? string.Empty : rdr.GetString(3),
+                    PetGender = rdr.IsDBNull(4) ? string.Empty : rdr.GetString(4),
+                    DateOfBirth = rdr.IsDBNull(5) ? (DateTime?)null : rdr.GetDateTime(5),
+                    PetAge = rdr.IsDBNull(6) ? (int?)null : rdr.GetInt16(6),
+                    PetWeight = rdr.IsDBNull(7) ? (decimal?)null : (decimal)rdr.GetDouble(7),
+                    MedicalHistory = rdr.IsDBNull(8) ? string.Empty : rdr.GetString(8),
+                    PetImage = rdr.IsDBNull(9) ? null : (byte[])rdr.GetValue(9),
+                    OwnerName = rdr.IsDBNull(10) ? string.Empty : rdr.GetString(10),
+                    Address = rdr.IsDBNull(11) ? string.Empty : rdr.GetString(11),
+                    ContactNo = rdr.IsDBNull(12) ? string.Empty : rdr.GetString(12),
+                    IsActive = rdr.IsDBNull(13) ? true : rdr.GetBoolean(13)
+                };
+                list.Add(pet);
+            }
+
+            return list;
         }
     }
 }

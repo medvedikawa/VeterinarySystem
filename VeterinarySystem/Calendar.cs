@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VeterinarySystem.Data;
 
 namespace VeterinarySystem
 {
@@ -26,15 +27,22 @@ namespace VeterinarySystem
         public class Appointment
         {
             public int Id { get; set; }
-            public string Title { get; set; }
+            public string Title { get; set; } = string.Empty;
             public DateTime StartTime { get; set; }
             public DateTime EndTime { get; set; }
-            public string Description { get; set; }
+            public string Description { get; set; } = string.Empty;
             public Color Color { get; set; }
+            public int? PetId { get; set; }
+            public string PetName { get; set; } = string.Empty;
 
             public Appointment()
             {
                 Color = Color.LightBlue;
+            }
+
+            public override string ToString()
+            {
+                return Title;
             }
         }
 
@@ -53,13 +61,13 @@ namespace VeterinarySystem
 
             public CalendarControl()
             {
-                // Initialize data first (so methods that reference appointments won't throw)
+                // Initialize data first
                 appointments = new List<Appointment>();
 
                 InitializeComponent();
 
-                // Load sample data and then update the UI
-                LoadSampleData();
+                // Load from database and then update the UI
+                LoadAppointmentsFromDatabase();
                 UpdateAppointmentList();
             }
 
@@ -94,7 +102,8 @@ namespace VeterinarySystem
                     ItemHeight = 60
                 };
                 appointmentListBox.DrawItem += AppointmentListBox_DrawItem;
-                appointmentListBox.DoubleClick += BtnEditAppointment_Click;
+                // double-click opens read-only details
+                appointmentListBox.DoubleClick += AppointmentListBox_DoubleClick;
 
                 // Buttons
                 btnAddAppointment = new Button
@@ -112,6 +121,7 @@ namespace VeterinarySystem
                     Size = new Size(140, 40),
                     Text = "Edit"
                 };
+                // Edit button allows editing (persisting is still in-memory for now)
                 btnEditAppointment.Click += BtnEditAppointment_Click;
 
                 btnDeleteAppointment = new Button
@@ -128,37 +138,36 @@ namespace VeterinarySystem
             monthCalendar, lblSelectedDate, appointmentListBox,
             btnAddAppointment, btnEditAppointment, btnDeleteAppointment
         });
-
-                // NOTE: Do NOT call UpdateAppointmentList() here � appointments is initialized in the constructor
             }
 
-            private void LoadSampleData()
+            private void LoadAppointmentsFromDatabase()
             {
-                // Add some sample appointments
-                appointments.Add(new Appointment
+                try
                 {
-                    Id = nextId++,
-                    Title = "Team Meeting",
-                    StartTime = DateTime.Today.AddHours(9),
-                    EndTime = DateTime.Today.AddHours(10),
-                    Description = "Weekly team standup",
-                    Color = Color.LightBlue
-                });
+                    var dbList = AppointmentRepository.GetAll();
 
-                appointments.Add(new Appointment
+                    appointments = dbList ?? new List<Appointment>();
+
+                    // ensure nextId is above highest DB id to avoid collisions for in-memory additions
+                    if (appointments.Any())
+                    {
+                        nextId = appointments.Max(a => a.Id) + 1;
+                    }
+                }
+                catch (Exception ex)
                 {
-                    Id = nextId++,
-                    Title = "Dentist Appointment",
-                    StartTime = DateTime.Today.AddHours(14),
-                    EndTime = DateTime.Today.AddHours(15),
-                    Description = "Regular checkup",
-                    Color = Color.LightGreen
-                });
+                    // don't crash the UI — show message and keep in-memory list
+                    MessageBox.Show("Failed to load appointments from database: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
 
             private void MonthCalendar_DateChanged(object sender, DateRangeEventArgs e)
             {
                 lblSelectedDate.Text = "Appointments for: " + monthCalendar.SelectionStart.ToShortDateString();
+
+                // reload from database so user sees new entries without restarting
+                LoadAppointmentsFromDatabase();
+
                 UpdateAppointmentList();
             }
 
@@ -216,14 +225,29 @@ namespace VeterinarySystem
                 {
                     if (dialog.ShowDialog(FindForm()) == DialogResult.OK)
                     {
-                        var newApt = dialog.Appointment;
-                        newApt.Id = nextId++;
-                        appointments.Add(newApt);
-                        UpdateAppointmentList();
+                        try
+                        {
+                            var newApt = dialog.Appointment;
+                            
+                            // ⭐ Save to database FIRST
+                            AppointmentRepository.Save(newApt);
+                            
+                            // Then reload from database to get the auto-generated ID
+                            LoadAppointmentsFromDatabase();
+                            UpdateAppointmentList();
+                            
+                            // ✅ Success message
+                            MessageBox.Show("✅ Appointment saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"❌ Failed to save appointment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
             }
 
+            // Edit button -> open editable dialog
             private void BtnEditAppointment_Click(object sender, EventArgs e)
             {
                 if (appointmentListBox.SelectedItem == null)
@@ -233,15 +257,25 @@ namespace VeterinarySystem
                 }
 
                 var selectedApt = (Appointment)appointmentListBox.SelectedItem;
-                using (var dialog = new AppointmentDialog(selectedApt))
+                using (var dialog = new AppointmentDialog(selectedApt, true)) // allow edit
                 {
                     if (dialog.ShowDialog(FindForm()) == DialogResult.OK)
                     {
-                        var index = appointments.FindIndex(a => a.Id == selectedApt.Id);
-                        if (index >= 0)
+                        try
                         {
-                            appointments[index] = dialog.Appointment;
+                            // ⭐ Update in database
+                            AppointmentRepository.Update(dialog.Appointment);
+                            
+                            // Reload from database
+                            LoadAppointmentsFromDatabase();
                             UpdateAppointmentList();
+                            
+                            // ✅ Success message
+                            MessageBox.Show("✅ Appointment updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"❌ Failed to update appointment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
@@ -251,7 +285,7 @@ namespace VeterinarySystem
             {
                 if (appointmentListBox.SelectedItem == null)
                 {
-                    MessageBox.Show("Please select an appointment to edit.", "No Selection");
+                    MessageBox.Show("Please select an appointment to delete.", "No Selection");
                     return;
                 }
 
@@ -260,14 +294,41 @@ namespace VeterinarySystem
 
                 if (result == DialogResult.Yes)
                 {
-                    var selectedApt = (Appointment)appointmentListBox.SelectedItem;
-                    appointments.RemoveAll(a => a.Id == selectedApt.Id);
-                    UpdateAppointmentList();
+                    try
+                    {
+                        var selectedApt = (Appointment)appointmentListBox.SelectedItem;
+                        
+                        // ⭐ Delete from database
+                        AppointmentRepository.Delete(selectedApt.Id);
+                        
+                        // Reload from database
+                        LoadAppointmentsFromDatabase();
+                        UpdateAppointmentList();
+                        
+                        // ✅ Success message
+                        MessageBox.Show("✅ Appointment deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"❌ Failed to delete appointment: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+
+            private void AppointmentListBox_DoubleClick(object sender, EventArgs e)
+            {
+                if (appointmentListBox.SelectedItem == null)
+                    return;
+
+                var selectedApt = (Appointment)appointmentListBox.SelectedItem;
+                using (var dialog = new AppointmentDialog(selectedApt, false)) // read-only dialog
+                {
+                    dialog.ShowDialog(FindForm());
                 }
             }
         }
 
-        // Dialog for adding/editing appointments
+        // Dialog for adding/editing/viewing appointments
         public class AppointmentDialog : Form
         {
             private TextBox txtTitle;
@@ -276,22 +337,27 @@ namespace VeterinarySystem
             private DateTimePicker dtpEndTime;
             private TextBox txtDescription;
             private ComboBox cmbColor;
+            private ComboBox cmbPet;
             private Button btnOk;
             private Button btnCancel;
             private bool isNew; // tracks whether dialog is for a new appointment
+            private bool isEditable; // controls whether fields may be edited
 
             public Appointment Appointment { get; private set; }
 
             public AppointmentDialog(DateTime defaultDate)
             {
                 isNew = true;
+                isEditable = true;
                 Appointment = new Appointment { StartTime = defaultDate.AddHours(9), EndTime = defaultDate.AddHours(10) };
                 InitializeDialog();
             }
 
-            public AppointmentDialog(Appointment existingAppointment)
+            // existingAppointment with explicit editable flag
+            public AppointmentDialog(Appointment existingAppointment, bool allowEdit)
             {
                 isNew = false;
+                isEditable = allowEdit;
                 Appointment = new Appointment
                 {
                     Id = existingAppointment.Id,
@@ -299,7 +365,9 @@ namespace VeterinarySystem
                     StartTime = existingAppointment.StartTime,
                     EndTime = existingAppointment.EndTime,
                     Description = existingAppointment.Description,
-                    Color = existingAppointment.Color
+                    Color = existingAppointment.Color,
+                    PetId = existingAppointment.PetId,
+                    PetName = existingAppointment.PetName
                 };
                 InitializeDialog();
             }
@@ -307,7 +375,7 @@ namespace VeterinarySystem
             private void InitializeDialog()
             {
                 this.Text = "Appointment Details";
-                this.Size = new Size(480, 420);
+                this.Size = new Size(520, 480);
                 this.StartPosition = FormStartPosition.CenterParent;
                 this.FormBorderStyle = FormBorderStyle.FixedDialog;
                 this.MaximizeBox = false;
@@ -323,8 +391,53 @@ namespace VeterinarySystem
 
                 // Title
                 this.Controls.Add(new Label { Text = "Title:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
-                txtTitle = new TextBox { Location = new Point(110, y), Size = new Size(330, 22), Text = Appointment.Title, BackColor = Color.White };
+                txtTitle = new TextBox { Location = new Point(110, y), Size = new Size(380, 22), Text = Appointment.Title, BackColor = Color.White };
+                txtTitle.ReadOnly = !isEditable;
                 this.Controls.Add(txtTitle);
+                y += 36;
+
+                // Pet selector (searchable combobox)
+                this.Controls.Add(new Label { Text = "Pet:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
+                cmbPet = new ComboBox
+                {
+                    Location = new Point(110, y),
+                    Size = new Size(300, 22),
+                    DropDownStyle = ComboBoxStyle.DropDown
+                };
+                cmbPet.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                cmbPet.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                cmbPet.Enabled = isEditable;
+                this.Controls.Add(cmbPet);
+
+                // load pet names into combobox
+                try
+                {
+                    var pets = AppointmentRepository.GetPetNames();
+                    var source = pets.Select(p => new { Id = p.Id, Name = p.Name }).ToList();
+                    cmbPet.DisplayMember = "Name";
+                    cmbPet.ValueMember = "Id";
+                    cmbPet.DataSource = source;
+
+                    // build autocomplete source
+                    var ac = new AutoCompleteStringCollection();
+                    ac.AddRange(source.Select(s => s.Name).ToArray());
+                    cmbPet.AutoCompleteCustomSource = ac;
+
+                    // set current selection if exists
+                    if (Appointment.PetId.HasValue)
+                    {
+                        cmbPet.SelectedValue = Appointment.PetId.Value;
+                    }
+                    else if (!string.IsNullOrEmpty(Appointment.PetName))
+                    {
+                        cmbPet.Text = Appointment.PetName;
+                    }
+                }
+                catch
+                {
+                    // ignore pet-loading errors to avoid blocking the dialog
+                }
+
                 y += 36;
 
                 // Date
@@ -334,6 +447,7 @@ namespace VeterinarySystem
                 {
                     dtpDate.MinDate = DateTime.Today;
                 }
+                dtpDate.Enabled = isEditable;
                 this.Controls.Add(dtpDate);
                 y += 36;
 
@@ -347,6 +461,7 @@ namespace VeterinarySystem
                     ShowUpDown = true,
                     Value = Appointment.StartTime
                 };
+                dtpStartTime.Enabled = isEditable;
                 this.Controls.Add(dtpStartTime);
                 y += 36;
 
@@ -360,6 +475,7 @@ namespace VeterinarySystem
                     ShowUpDown = true,
                     Value = Appointment.EndTime
                 };
+                dtpEndTime.Enabled = isEditable;
                 this.Controls.Add(dtpEndTime);
                 y += 36;
 
@@ -371,8 +487,12 @@ namespace VeterinarySystem
                     Size = new Size(150, 22),
                     DropDownStyle = ComboBoxStyle.DropDownList
                 };
-                cmbColor.Items.AddRange(new object[] { "Light Blue", "Light Green", "Light Yellow", "Light Pink", "Light Coral" });
-                cmbColor.SelectedIndex = 0;
+                cmbColor.Items.AddRange(new object[] { "LightBlue", "LightGreen", "LightYellow", "LightPink", "LightCoral" });
+                // select color by name if possible
+                var colorName = Appointment.Color.IsEmpty ? "LightBlue" : Appointment.Color.Name;
+                var idx = cmbColor.Items.IndexOf(colorName);
+                cmbColor.SelectedIndex = idx >= 0 ? idx : 0;
+                cmbColor.Enabled = isEditable;
                 this.Controls.Add(cmbColor);
                 y += 36;
 
@@ -381,30 +501,53 @@ namespace VeterinarySystem
                 txtDescription = new TextBox
                 {
                     Location = new Point(110, y),
-                    Size = new Size(330, 84),
+                    Size = new Size(380, 120),
                     Multiline = true,
                     Text = Appointment.Description,
                     BackColor = Color.White
                 };
+                txtDescription.ReadOnly = !isEditable;
                 this.Controls.Add(txtDescription);
-                y += 96;
+                y += 132;
 
                 // Buttons
-                btnOk = new Button { Text = "OK", Location = new Point(290, y), Size = new Size(75, 30), DialogResult = DialogResult.OK, BackColor = Color.FromArgb(64, 120, 170), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+                btnOk = new Button { Text = "OK", Location = new Point(320, y), Size = new Size(75, 30), DialogResult = DialogResult.OK, BackColor = Color.FromArgb(64, 120, 170), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
                 btnOk.FlatAppearance.BorderSize = 0;
                 btnOk.Click += BtnOk_Click;
                 this.Controls.Add(btnOk);
 
-                btnCancel = new Button { Text = "Cancel", Location = new Point(375, y), Size = new Size(75, 30), DialogResult = DialogResult.Cancel, BackColor = Color.FromArgb(160, 82, 45), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+                btnCancel = new Button { Text = isEditable ? "Cancel" : "Close", Location = new Point(405, y), Size = new Size(85, 30), DialogResult = DialogResult.Cancel, BackColor = Color.FromArgb(160, 82, 45), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
                 btnCancel.FlatAppearance.BorderSize = 0;
                 this.Controls.Add(btnCancel);
 
                 this.AcceptButton = btnOk;
                 this.CancelButton = btnCancel;
+
+                // If not editable, hide OK (or disable) to prevent accidental edits
+                if (!isEditable)
+                {
+                    btnOk.Visible = false;
+                }
             }
 
             private void BtnOk_Click(object sender, EventArgs e)
             {
+                if (!isEditable)
+                {
+                    // should not happen because OK is hidden, but guard anyway
+                    this.DialogResult = DialogResult.Cancel;
+                    return;
+                }
+
+                // ⭐ NEW: Require pet selection
+                if (cmbPet.SelectedItem == null || (cmbPet.SelectedValue == null && string.IsNullOrWhiteSpace(cmbPet.Text)))
+                {
+                    MessageBox.Show("Please select a pet for this appointment.", "Pet Required");
+                    this.DialogResult = DialogResult.None;
+                    cmbPet.Focus();
+                    return;
+                }
+
                 if (string.IsNullOrWhiteSpace(txtTitle.Text))
                 {
                     MessageBox.Show("Please enter a title.", "Validation Error");
@@ -422,8 +565,8 @@ namespace VeterinarySystem
                     return;
                 }
 
-                // Disallow booking in the past (no appointments start earlier than now)
-                if (startTime < DateTime.Now)
+                // Disallow booking in the past for new appointments
+                if (isNew && startTime < DateTime.Now)
                 {
                     MessageBox.Show("Appointments cannot start in the past. Please choose a future date/time.", "Validation Error");
                     this.DialogResult = DialogResult.None;
@@ -434,19 +577,37 @@ namespace VeterinarySystem
                 Appointment.StartTime = startTime;
                 Appointment.EndTime = endTime;
                 Appointment.Description = txtDescription.Text;
-                Appointment.Color = GetSelectedColor();
-            }
 
-            private Color GetSelectedColor()
-            {
-                switch (cmbColor.SelectedIndex)
+                // Capture pet selection (if any)
+                try
                 {
-                    case 0: return Color.LightBlue;
-                    case 1: return Color.LightGreen;
-                    case 2: return Color.LightYellow;
-                    case 3: return Color.LightPink;
-                    case 4: return Color.LightCoral;
-                    default: return Color.LightBlue;
+                    if (cmbPet.SelectedItem != null)
+                    {
+                        var val = (int)cmbPet.SelectedValue;
+                        Appointment.PetId = val;
+                        Appointment.PetName = cmbPet.Text;
+                    }
+                    else if (!string.IsNullOrWhiteSpace(cmbPet.Text))
+                    {
+                        Appointment.PetName = cmbPet.Text;
+                        Appointment.PetId = null;
+                    }
+                }
+                catch
+                {
+                    Appointment.PetName = cmbPet.Text;
+                    Appointment.PetId = null;
+                }
+
+                var sel = cmbColor.SelectedItem as string ?? "LightBlue";
+                try
+                {
+                    var c = Color.FromName(sel);
+                    Appointment.Color = c.IsEmpty ? Color.LightBlue : c;
+                }
+                catch
+                {
+                    Appointment.Color = Color.LightBlue;
                 }
             }
         }

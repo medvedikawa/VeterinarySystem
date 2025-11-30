@@ -39,7 +39,6 @@
             mainPanel = new Panel();
             label1 = new Label();
             petGridWillAppear = new FlowLayoutPanel();
-            petGrid1 = new petGrid();
             dashCalendar1 = new dashCalendar();
             flowLayoutPanel1.SuspendLayout();
             pnlTop.SuspendLayout();
@@ -47,7 +46,6 @@
             panel3.SuspendLayout();
             panel4.SuspendLayout();
             mainPanel.SuspendLayout();
-            petGridWillAppear.SuspendLayout();
             SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -168,18 +166,10 @@
             // 
             // petGridWillAppear
             // 
-            petGridWillAppear.Controls.Add(petGrid1);
             petGridWillAppear.Location = new Point(0, 409);
             petGridWillAppear.Name = "petGridWillAppear";
             petGridWillAppear.Size = new Size(950, 217);
             petGridWillAppear.TabIndex = 1;
-            // 
-            // petGrid1
-            // 
-            petGrid1.Location = new Point(3, 3);
-            petGrid1.Name = "petGrid1";
-            petGrid1.Size = new Size(190, 208);
-            petGrid1.TabIndex = 0;
             // 
             // dashCalendar1
             // 
@@ -206,7 +196,6 @@
             panel4.ResumeLayout(false);
             mainPanel.ResumeLayout(false);
             mainPanel.PerformLayout();
-            petGridWillAppear.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -224,6 +213,5 @@
         private dashCalendar dashCalendar1;
         private FlowLayoutPanel petGridWillAppear;
         private Label label1;
-        private petGrid petGrid1;
     }
 }

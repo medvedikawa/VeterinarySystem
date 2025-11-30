@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using VeterinarySystem.Data;
 
 namespace VeterinarySystem
 {
@@ -13,7 +14,9 @@ namespace VeterinarySystem
         private Panel calendarCard;
         private Panel weekDaysPanel;
         private Panel timelinePanel;
+        private FlowLayoutPanel petGridWillAppear;
         private Label lblMonthYear;
+        private Label lblRecentlyAdded;
         private Button btnPrev;
         private Button btnNext;
         private Button btnAddAppointment;
@@ -28,7 +31,8 @@ namespace VeterinarySystem
                 return;
 
             BuildRuntimeUI();
-            LoadSampleData();
+            LoadAppointmentsFromDatabase();
+            LoadRecentPets();
             RefreshCalendar();
         }
 
@@ -42,7 +46,6 @@ namespace VeterinarySystem
             {
                 Location = new Point(20, 20),
                 Size = new Size(420, 320),
-                // MATCHED sidebar design color (panel3 / panel4 BackColor in usrSidebar.Designer.cs)
                 BackColor = Color.White
             };
             calendarCard.Paint += DrawRoundedCard;
@@ -64,8 +67,8 @@ namespace VeterinarySystem
                 Size = new Size(30, 30),
                 Font = new Font("Segoe UI", 14F),
                 FlatStyle = FlatStyle.Flat,
-                BackColor = Color.White, // sidebar-like warm color
-                ForeColor = Color.FromArgb(94, 86, 81),    // contrasting text color
+                BackColor = Color.White,
+                ForeColor = Color.FromArgb(94, 86, 81),
                 Cursor = Cursors.Hand
             };
             btnPrev.FlatAppearance.BorderSize = 0;
@@ -79,7 +82,7 @@ namespace VeterinarySystem
                 Size = new Size(30, 30),
                 Font = new Font("Segoe UI", 14F),
                 FlatStyle = FlatStyle.Flat,
-                BackColor = Color.White, // match prev for consistency
+                BackColor = Color.White,
                 ForeColor = Color.FromArgb(94, 86, 81),
                 Cursor = Cursors.Hand,
                 Visible = true
@@ -98,7 +101,7 @@ namespace VeterinarySystem
 
             calendarCard.Controls.AddRange(new Control[] { lblMonthYear, btnPrev, btnNext, weekDaysPanel });
 
-            // Timeline Panel (moved to left by UpdateLayout)
+            // Timeline Panel
             timelinePanel = new Panel
             {
                 Location = new Point(20, 20),
@@ -108,7 +111,29 @@ namespace VeterinarySystem
             };
             timelinePanel.Paint += DrawRoundedCard;
 
-            // Add appointment button (kept floating)
+            // ⭐ NEW: Recently Added Pets Section
+            lblRecentlyAdded = new Label
+            {
+                Text = "Recently Added:",
+                Location = new Point(20, 370),
+                Size = new Size(420, 25),
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(50, 50, 50),
+                AutoSize = false
+            };
+
+            petGridWillAppear = new FlowLayoutPanel
+            {
+                Location = new Point(20, 400),
+                Size = new Size(420, 200),
+                BackColor = Color.Transparent,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = true,
+                AutoScroll = true,
+                Padding = new Padding(5)
+            };
+
+            // Add appointment button
             btnAddAppointment = new Button
             {
                 Text = "+",
@@ -116,7 +141,7 @@ namespace VeterinarySystem
                 Location = new Point(380, 990),
                 Font = new Font("Segoe UI", 18F, FontStyle.Bold),
                 BackColor = Color.White,
-                ForeColor = Color.FromArgb(100, 149, 237),
+                ForeColor = Color.FromArgb(230, 126, 34),
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand
             };
@@ -130,13 +155,11 @@ namespace VeterinarySystem
                 btnAddAppointment.Region = new Region(path);
             };
 
-            this.Controls.AddRange(new Control[] { timelinePanel, calendarCard, btnAddAppointment });
+            this.Controls.AddRange(new Control[] { timelinePanel, calendarCard, lblRecentlyAdded, petGridWillAppear, btnAddAppointment });
 
-            // wire resize to update layout so the control adapts when hosted
             this.Resize += (s, e) => UpdateLayout();
             UpdateLayout();
 
-            // create week-day labels and calendar after layout established
             CreateWeekDaysHeader();
             RefreshCalendar();
         }
@@ -148,15 +171,12 @@ namespace VeterinarySystem
             int availableWidth = Math.Max(400, this.ClientSize.Width - pad * 2);
             int availableHeight = Math.Max(320, this.ClientSize.Height - pad * 2);
 
-            // Keep minimum widths
             int minCalendarWidth = 300;
             int minTimelineWidth = 220;
 
-            // Compute maximum timeline width possible while preserving min calendar width
             int maxTimelinePossible = availableWidth - minCalendarWidth - gap;
             if (maxTimelinePossible < minTimelineWidth)
             {
-                // Not enough space for min calendar; fallback to proportional split
                 int timelineWidthFallback = Math.Max(minTimelineWidth, (int)(availableWidth * 0.6));
                 timelineWidthFallback = Math.Min(timelineWidthFallback, availableWidth - gap - 200);
                 int calendarWidthFallback = availableWidth - timelineWidthFallback - gap;
@@ -168,17 +188,12 @@ namespace VeterinarySystem
             }
             else
             {
-                // Maximize timeline: give it the maximum space available while keeping calendar at minimum
                 int timelineWidth = Math.Max(minTimelineWidth, maxTimelinePossible);
-                // cap it so calendar still has at least minCalendarWidth
                 timelineWidth = Math.Min(timelineWidth, availableWidth - minCalendarWidth - gap);
 
                 int calendarWidth = availableWidth - timelineWidth - gap;
-
-                // Decide calendar card height
                 int calendarCardHeight = Math.Max(320, (int)(availableHeight * 0.52));
 
-                // Position timeline (left) and calendar (right). Timeline takes as much width as possible.
                 timelinePanel.Location = new Point(pad, pad);
                 timelinePanel.Size = new Size(timelineWidth, calendarCardHeight);
 
@@ -186,19 +201,20 @@ namespace VeterinarySystem
                 calendarCard.Size = new Size(calendarWidth, calendarCardHeight);
             }
 
-            // month navigation relative to calendar width
             int navX = Math.Max(8, calendarCard.ClientSize.Width - 70 - calendarCard.Padding.Right - 6);
             btnPrev.Location = new Point(navX, 18);
             btnNext.Location = new Point(navX + 35, 18);
 
-            // week header width matches calendar inner width
             weekDaysPanel.Location = new Point(10, 50);
             weekDaysPanel.Size = new Size(calendarCard.Width - 20, 30);
 
-            // place add button bottom-right of timelinePanel
+            // Position "Recently Added" and petGridWillAppear
+            lblRecentlyAdded.Location = new Point(calendarCard.Left, calendarCard.Bottom + 20);
+            petGridWillAppear.Location = new Point(calendarCard.Left, lblRecentlyAdded.Bottom + 8);
+            petGridWillAppear.Size = new Size(calendarCard.Width, 200);
+
             btnAddAppointment.Location = new Point(timelinePanel.Right - btnAddAppointment.Width - 12, timelinePanel.Bottom - btnAddAppointment.Height - 12);
 
-            // refresh to recreate calendar buttons and timeline items to fit new sizes
             RefreshCalendar();
         }
 
@@ -227,7 +243,6 @@ namespace VeterinarySystem
 
         private void CreateCalendarGrid()
         {
-            // Remove existing day buttons (RefreshCalendar typically clears prior)
             var firstDay = new DateTime(selectedDate.Year, selectedDate.Month, 1);
             int startDayOfWeek = (int)firstDay.DayOfWeek;
             int daysInMonth = DateTime.DaysInMonth(selectedDate.Year, selectedDate.Month);
@@ -253,7 +268,7 @@ namespace VeterinarySystem
                     Size = new Size(dayWidth - 4, dayHeight - 4),
                     Font = new Font("Segoe UI", 9F, isToday ? FontStyle.Bold : FontStyle.Regular),
                     FlatStyle = FlatStyle.Flat,
-                    BackColor = isToday ? Color.FromArgb(59, 130, 246) : Color.White,
+                    BackColor = isToday ? Color.FromArgb(230, 126, 34) : Color.White,
                     ForeColor = isToday ? Color.White : Color.FromArgb(80, 80, 80),
                     Cursor = Cursors.Hand,
                     Tag = date
@@ -282,81 +297,6 @@ namespace VeterinarySystem
             }
         }
 
-        //private Panel CreateTodayAppointmentCard()
-        //{
-        //    var todayApt = appointments.FirstOrDefault(a => a.Time.Date == DateTime.Today && a.Time.Hour >= DateTime.Now.Hour);
-
-        //    var card = new Panel
-        //    {
-        //        Size = new Size(Math.Max(280, calendarCard.Width - 60), 45),
-        //        BackColor = Color.Black,
-        //        Cursor = Cursors.Hand
-        //    };
-
-        //    card.Paint += (s, e) =>
-        //    {
-        //        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
-        //        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-        //        using var path = GetRoundedRectPath(new Rectangle(0, 0, card.Width - 1, card.Height - 1), 8);
-        //        card.Region = new Region(path);
-        //    };
-
-        //    if (todayApt != null)
-        //    {
-        //        var avatar = new Panel
-        //        {
-        //            Size = new Size(32, 32),
-        //            Location = new Point(8, 7),
-        //            BackColor = todayApt.AvatarColor
-        //        };
-        //        avatar.Paint += (s, e) =>
-        //        {
-        //            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
-        //            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-        //            using var path = new GraphicsPath();
-        //            path.AddEllipse(0, 0, 32, 32);
-        //            avatar.Region = new Region(path);
-        //            using var sf = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-        //            e.Graphics.DrawString(todayApt.Initials, new Font("Segoe UI", 8F, FontStyle.Bold),
-        //                Brushes.White, new RectangleF(0, 0, 32, 32), sf);
-        //        };
-
-        //        var lblName = new Label
-        //        {
-        //            Text = todayApt.Title,
-        //            Location = new Point(48, 10),
-        //            Size = new Size(200, 18),
-        //            Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-        //            ForeColor = Color.FromArgb(50, 50, 50)
-        //        };
-
-        //        var lblTime = new Label
-        //        {
-        //            Text = todayApt.Time.ToString("hh:mm tt"),
-        //            Location = new Point(48, 26),
-        //            Size = new Size(100, 14),
-        //            Font = new Font("Segoe UI", 7.5F),
-        //            ForeColor = Color.Gray
-        //        };
-
-        //        var chevron = new Label
-        //        {
-        //            Text = "›",
-        //            Location = new Point(card.Width - 30, 12),
-        //            Size = new Size(20, 20),
-        //            Font = new Font("Segoe UI", 14F),
-        //            ForeColor = Color.LightGray,
-        //            Anchor = AnchorStyles.Top | AnchorStyles.Right
-        //        };
-
-        //        card.Resize += (s, e) => chevron.Location = new Point(card.Width - 30, 12);
-
-        //        card.Controls.AddRange(new Control[] { avatar, lblName, lblTime, chevron });
-        //    }
-
-        //    return card;
-        //}
-
         private void RefreshTimeline()
         {
             if (timelinePanel == null) return;
@@ -373,7 +313,6 @@ namespace VeterinarySystem
 
             for (int hour = hourStart; hour <= hourEnd; hour++)
             {
-                // Time label
                 var lblTime = new Label
                 {
                     Text = $"{hour:D2}:00",
@@ -384,7 +323,6 @@ namespace VeterinarySystem
                 };
                 timelinePanel.Controls.Add(lblTime);
 
-                // Timeline line
                 var line = new Panel
                 {
                     Location = new Point(72, yPos + 8),
@@ -393,7 +331,6 @@ namespace VeterinarySystem
                 };
                 timelinePanel.Controls.Add(line);
 
-                // Check for appointments at this hour
                 var hourApts = todayApts.Where(a => a.Time.Hour == hour).ToList();
 
                 foreach (var apt in hourApts)
@@ -513,7 +450,6 @@ namespace VeterinarySystem
 
         private void RefreshCalendar()
         {
-            // Clear existing calendar day buttons
             var buttonsToRemove = calendarCard.Controls.OfType<Button>()
                 .Where(b => b != btnPrev && b != btnNext && b.Tag is DateTime)
                 .ToList();
@@ -521,26 +457,11 @@ namespace VeterinarySystem
             foreach (var btn in buttonsToRemove)
                 calendarCard.Controls.Remove(btn);
 
-            // Recreate week header (layout might have changed)
             CreateWeekDaysHeader();
-
-            // Recreate calendar grid
             CreateCalendarGrid();
 
-            // Update month label
             lblMonthYear.Text = selectedDate.ToString("MMMM, yyyy");
 
-            // Update today card
-            var oldCard = calendarCard.Controls.OfType<Panel>().FirstOrDefault(p => p.Location.Y >= 240);
-            if (oldCard != null) calendarCard.Controls.Remove(oldCard);
-
-            //var newCard = CreateTodayAppointmentCard();
-            // position today card near bottom of calendar card
-            //int cardY = Math.Max((calendarCard.Height - newCard.Height - 20), (int)(calendarCard.Height * 0.65));
-            //newCard.Location = new Point(20, cardY);
-            //calendarCard.Controls.Add(newCard);
-
-            // Ensure navigation controls and header sit on top (not covered by recently added day buttons)
             lblMonthYear.BringToFront();
             btnPrev.BringToFront();
             btnNext.BringToFront();
@@ -549,32 +470,77 @@ namespace VeterinarySystem
             RefreshTimeline();
         }
 
-        private void LoadSampleData()
+        // ⭐ NEW: Load recent pets and populate the flow panel
+        private void LoadRecentPets()
         {
-            var today = DateTime.Today;
-            appointments = new List<TimelineAppointment>
+            try
+            {
+                petGridWillAppear.Controls.Clear();
+                var recentPets = PetRepository.GetRecentPets(4);
+
+                foreach (var pet in recentPets)
                 {
-                    new TimelineAppointment
+                    var grid = new petGrid();
+                    grid.SetPetData(pet);
+                    petGridWillAppear.Controls.Add(grid);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to load recent pets: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void LoadAppointmentsFromDatabase()
+        {
+            try
+            {
+                var dbList = AppointmentRepository.GetAll();
+                appointments.Clear();
+
+                if (dbList != null && dbList.Any())
+                {
+                    foreach (var apt in dbList)
                     {
-                        Id = 1, Title = "Nino", Subtitle = "Vaccination",
-                        Time = today.AddHours(9), AvatarColor = Color.FromArgb(100,149,237), Initials = "NI"
-                    },
-                    new TimelineAppointment
-                    {
-                        Id = 2, Title = "Sassy", Subtitle = "Check-up",
-                        Time = today.AddHours(11), AvatarColor = Color.FromArgb(255,105,180), Initials = "SA"
-                    },
-                    new TimelineAppointment
-                    {
-                        Id = 3, Title = "Jimmy", Subtitle = "Surgery",
-                        Time = today.AddHours(14), AvatarColor = Color.FromArgb(255,105,180), Initials = "JI"
-                    },
-                    new TimelineAppointment
-                    {
-                        Id = 4, Title = "Donut", Subtitle = "Follow-up",
-                        Time = today.AddHours(15), AvatarColor = Color.FromArgb(100,149,237), Initials = "DO"
+                        var initials = string.Empty;
+                        if (!string.IsNullOrEmpty(apt.PetName))
+                        {
+                            var words = apt.PetName.Split(' ');
+                            initials = string.Concat(words.Select(w => w.FirstOrDefault()));
+                        }
+
+                        var color = GetColorForAppointment(apt.Color);
+
+                        appointments.Add(new TimelineAppointment
+                        {
+                            Id = apt.Id,
+                            Title = apt.PetName ?? apt.Title,
+                            Subtitle = apt.Title,
+                            Time = apt.StartTime,
+                            AvatarColor = color,
+                            Initials = initials.Length > 0 ? initials : "A"
+                        });
                     }
-                };
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to load appointments: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private Color GetColorForAppointment(Color dbColor)
+        {
+            if (dbColor.Name == "LightGreen" || dbColor.ToArgb() == Color.LightGreen.ToArgb())
+                return Color.FromArgb(46, 204, 113);
+            if (dbColor.Name == "LightCoral" || dbColor.ToArgb() == Color.LightCoral.ToArgb())
+                return Color.FromArgb(231, 76, 60);
+            if (dbColor.Name == "LightYellow" || dbColor.ToArgb() == Color.LightYellow.ToArgb())
+                return Color.FromArgb(241, 196, 15);
+            if (dbColor.Name == "LightPink" || dbColor.ToArgb() == Color.LightPink.ToArgb())
+                return Color.FromArgb(255, 105, 180);
+            
+            return Color.FromArgb(230, 126, 34);
         }
     }
 
@@ -589,7 +555,7 @@ namespace VeterinarySystem
 
         public TimelineAppointment()
         {
-            AvatarColor = Color.FromArgb(100, 149, 237);
+            AvatarColor = Color.FromArgb(230, 126, 34);
         }
     }
 }
