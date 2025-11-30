@@ -1,4 +1,4 @@
-csharp VeterinarySystem\Calendar.cs
+VeterinarySystem\Calendar.cs
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,9 +37,6 @@ namespace VeterinarySystem
             {
                 Color = Color.LightBlue;
             }
-
-            public override string ToString() =>
-                $"{Title ?? string.Empty} ({StartTime:HH:mm} - {EndTime:HH:mm})";
         }
 
 
@@ -86,7 +83,7 @@ namespace VeterinarySystem
                     Location = new Point(300, 20),
                     Size = new Size(450, 30),
                     Font = new Font("Arial", 14, FontStyle.Bold),
-                    Text = "Appointments for: " + DateTime.Today.ToString("MMMM dd, yyyy")
+                    Text = "Appointments for: " + monthCalendar.SelectionStart.ToString("MMMM dd, yyyy")
                 };
 
                 // ListBox for appointments
@@ -204,13 +201,12 @@ namespace VeterinarySystem
 
                 // Draw appointment details
                 string timeText = $"{apt.StartTime:HH:mm} - {apt.EndTime:HH:mm}";
-                using (Font titleFont = new Font("Arial", 10, FontStyle.Bold))
-                using (Font detailFont = new Font("Arial", 9))
-                {
-                    e.Graphics.DrawString(apt.Title ?? string.Empty, titleFont, Brushes.Black, e.Bounds.Left + 25, e.Bounds.Top + 5);
-                    e.Graphics.DrawString(timeText, detailFont, Brushes.Gray, e.Bounds.Left + 25, e.Bounds.Top + 25);
-                    e.Graphics.DrawString(apt.Description ?? string.Empty, detailFont, Brushes.DarkGray, e.Bounds.Left + 25, e.Bounds.Top + 42);
-                }
+                Font titleFont = new Font("Arial", 10, FontStyle.Bold);
+                Font detailFont = new Font("Arial", 9);
+
+                e.Graphics.DrawString(apt.Title, titleFont, Brushes.Black, e.Bounds.Left + 25, e.Bounds.Top + 5);
+                e.Graphics.DrawString(timeText, detailFont, Brushes.Gray, e.Bounds.Left + 25, e.Bounds.Top + 25);
+                e.Graphics.DrawString(apt.Description, detailFont, Brushes.DarkGray, e.Bounds.Left + 25, e.Bounds.Top + 42);
 
                 e.DrawFocusRectangle();
             }
@@ -219,7 +215,7 @@ namespace VeterinarySystem
             {
                 using (var dialog = new AppointmentDialog(monthCalendar.SelectionStart))
                 {
-                    if (dialog.ShowDialog() == DialogResult.OK)
+                    if (dialog.ShowDialog(FindForm()) == DialogResult.OK)
                     {
                         var newApt = dialog.Appointment;
                         newApt.Id = nextId++;
@@ -240,21 +236,14 @@ namespace VeterinarySystem
                 var selectedApt = (Appointment)appointmentListBox.SelectedItem;
                 using (var dialog = new AppointmentDialog(selectedApt))
                 {
-                    if (dialog.ShowDialog() == DialogResult.OK)
+                    if (dialog.ShowDialog(FindForm()) == DialogResult.OK)
                     {
                         var index = appointments.FindIndex(a => a.Id == selectedApt.Id);
                         if (index >= 0)
                         {
                             appointments[index] = dialog.Appointment;
+                            UpdateAppointmentList();
                         }
-                        else
-                        {
-                            // if not found (defensive) add it
-                            dialog.Appointment.Id = nextId++;
-                            appointments.Add(dialog.Appointment);
-                        }
-
-                        UpdateAppointmentList();
                     }
                 }
             }
@@ -263,7 +252,7 @@ namespace VeterinarySystem
             {
                 if (appointmentListBox.SelectedItem == null)
                 {
-                    MessageBox.Show("Please select an appointment to delete.", "No Selection");
+                    MessageBox.Show("Please select an appointment to edit.", "No Selection");
                     return;
                 }
 
@@ -319,88 +308,96 @@ namespace VeterinarySystem
             private void InitializeDialog()
             {
                 this.Text = "Appointment Details";
-                this.Size = new Size(450, 400);
+                this.Size = new Size(480, 420);
                 this.StartPosition = FormStartPosition.CenterParent;
                 this.FormBorderStyle = FormBorderStyle.FixedDialog;
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
 
-                int y = 20;
+                // Apply warm beige theme and spacing
+                this.BackColor = Color.FromArgb(237, 219, 186);
+                this.Padding = new Padding(12);
+                this.Font = new Font("Segoe UI", 9F);
+                this.ForeColor = Color.FromArgb(94, 86, 81);
+
+                int y = 18;
 
                 // Title
-                this.Controls.Add(new Label { Text = "Title:", Location = new Point(20, y), Size = new Size(80, 20) });
-                txtTitle = new TextBox { Location = new Point(110, y), Size = new Size(300, 20), Text = Appointment?.Title ?? string.Empty };
+                this.Controls.Add(new Label { Text = "Title:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
+                txtTitle = new TextBox { Location = new Point(110, y), Size = new Size(330, 22), Text = Appointment.Title, BackColor = Color.White };
                 this.Controls.Add(txtTitle);
-                y += 35;
+                y += 36;
 
                 // Date
-                this.Controls.Add(new Label { Text = "Date:", Location = new Point(20, y), Size = new Size(80, 20) });
-                dtpDate = new DateTimePicker { Location = new Point(110, y), Size = new Size(200, 20), Value = Appointment.StartTime.Date };
-                // For new appointments prevent selecting past dates; for existing allow editing old dates
+                this.Controls.Add(new Label { Text = "Date:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
+                dtpDate = new DateTimePicker { Location = new Point(110, y), Size = new Size(200, 22), Value = Appointment.StartTime.Date };
                 if (isNew)
                 {
                     dtpDate.MinDate = DateTime.Today;
                 }
                 this.Controls.Add(dtpDate);
-                y += 35;
+                y += 36;
 
                 // Start Time
-                this.Controls.Add(new Label { Text = "Start Time:", Location = new Point(20, y), Size = new Size(80, 20) });
+                this.Controls.Add(new Label { Text = "Start Time:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
                 dtpStartTime = new DateTimePicker
                 {
                     Location = new Point(110, y),
-                    Size = new Size(120, 20),
+                    Size = new Size(120, 22),
                     Format = DateTimePickerFormat.Time,
                     ShowUpDown = true,
                     Value = Appointment.StartTime
                 };
                 this.Controls.Add(dtpStartTime);
-                y += 35;
+                y += 36;
 
                 // End Time
-                this.Controls.Add(new Label { Text = "End Time:", Location = new Point(20, y), Size = new Size(80, 20) });
+                this.Controls.Add(new Label { Text = "End Time:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
                 dtpEndTime = new DateTimePicker
                 {
                     Location = new Point(110, y),
-                    Size = new Size(120, 20),
+                    Size = new Size(120, 22),
                     Format = DateTimePickerFormat.Time,
                     ShowUpDown = true,
                     Value = Appointment.EndTime
                 };
                 this.Controls.Add(dtpEndTime);
-                y += 35;
+                y += 36;
 
                 // Color
-                this.Controls.Add(new Label { Text = "Color:", Location = new Point(20, y), Size = new Size(80, 20) });
+                this.Controls.Add(new Label { Text = "Color:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
                 cmbColor = new ComboBox
                 {
                     Location = new Point(110, y),
-                    Size = new Size(150, 20),
+                    Size = new Size(150, 22),
                     DropDownStyle = ComboBoxStyle.DropDownList
                 };
                 cmbColor.Items.AddRange(new object[] { "Light Blue", "Light Green", "Light Yellow", "Light Pink", "Light Coral" });
-                cmbColor.SelectedIndex = GetColorIndex(Appointment.Color);
+                cmbColor.SelectedIndex = 0;
                 this.Controls.Add(cmbColor);
-                y += 35;
+                y += 36;
 
                 // Description
-                this.Controls.Add(new Label { Text = "Description:", Location = new Point(20, y), Size = new Size(80, 20) });
+                this.Controls.Add(new Label { Text = "Description:", Location = new Point(20, y), Size = new Size(80, 20), BackColor = Color.Transparent });
                 txtDescription = new TextBox
                 {
                     Location = new Point(110, y),
-                    Size = new Size(300, 80),
+                    Size = new Size(330, 84),
                     Multiline = true,
-                    Text = Appointment?.Description ?? string.Empty
+                    Text = Appointment.Description,
+                    BackColor = Color.White
                 };
                 this.Controls.Add(txtDescription);
-                y += 95;
+                y += 96;
 
                 // Buttons
-                btnOk = new Button { Text = "OK", Location = new Point(250, y), Size = new Size(75, 30), DialogResult = DialogResult.OK };
+                btnOk = new Button { Text = "OK", Location = new Point(290, y), Size = new Size(75, 30), DialogResult = DialogResult.OK, BackColor = Color.FromArgb(64, 120, 170), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+                btnOk.FlatAppearance.BorderSize = 0;
                 btnOk.Click += BtnOk_Click;
                 this.Controls.Add(btnOk);
 
-                btnCancel = new Button { Text = "Cancel", Location = new Point(335, y), Size = new Size(75, 30), DialogResult = DialogResult.Cancel };
+                btnCancel = new Button { Text = "Cancel", Location = new Point(375, y), Size = new Size(75, 30), DialogResult = DialogResult.Cancel, BackColor = Color.FromArgb(160, 82, 45), ForeColor = Color.White, FlatStyle = FlatStyle.Flat };
+                btnCancel.FlatAppearance.BorderSize = 0;
                 this.Controls.Add(btnCancel);
 
                 this.AcceptButton = btnOk;
@@ -452,15 +449,6 @@ namespace VeterinarySystem
                     case 4: return Color.LightCoral;
                     default: return Color.LightBlue;
                 }
-            }
-
-            private int GetColorIndex(Color c)
-            {
-                if (c == Color.LightGreen) return 1;
-                if (c == Color.LightYellow) return 2;
-                if (c == Color.LightPink) return 3;
-                if (c == Color.LightCoral) return 4;
-                return 0; // LightBlue default
             }
         }
     }
