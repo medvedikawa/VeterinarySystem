@@ -31,6 +31,7 @@
             panel1 = new Panel();
             btnBack = new Button();
             label1 = new Label();
+            cmbSearch = new ComboBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -56,6 +57,7 @@
             btnBack.TabIndex = 1;
             btnBack.Text = "< Return";
             btnBack.UseVisualStyleBackColor = false;
+            btnBack.Click += btnBack_Click;
             // 
             // label1
             // 
@@ -63,17 +65,31 @@
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Cooper Black", 27.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.FromArgb(35, 31, 32);
-            label1.Location = new Point(445, 179);
+            label1.Location = new Point(448, 221);
             label1.Name = "label1";
             label1.Size = new Size(285, 42);
             label1.TabIndex = 1;
             label1.Text = "Search for pet";
+            // 
+            // cmbSearch
+            // 
+            cmbSearch.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbSearch.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            cmbSearch.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cmbSearch.FormattingEnabled = true;
+            cmbSearch.Location = new Point(430, 306);
+            cmbSearch.Name = "cmbSearch";
+            cmbSearch.Size = new Size(321, 29);
+            cmbSearch.TabIndex = 2;
+            cmbSearch.SelectionChangeCommitted += cmbSearch_SelectionChangeCommitted_1;
+            cmbSearch.KeyDown += cmbSearch_KeyDown_1;
             // 
             // searchFunction
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.loginImage;
+            Controls.Add(cmbSearch);
             Controls.Add(label1);
             Controls.Add(panel1);
             Name = "searchFunction";
@@ -88,5 +104,6 @@
         private Panel panel1;
         private Button btnBack;
         private Label label1;
+        private ComboBox cmbSearch;
     }
 }

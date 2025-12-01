@@ -16,7 +16,16 @@ namespace VeterinarySystem
 
         private void btnViewRecords_Click(object sender, EventArgs e)
         {
+            FrmMainDashboard dashboard = Application.OpenForms["FrmMainDashboard"] as FrmMainDashboard;
 
+            if (dashboard != null)
+            {
+                // Show search function in panel5
+                dashboard.ShowInPanel5(new searchFunction());
+            }
+
+            // Close this sidebar form
+            this.Close();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)

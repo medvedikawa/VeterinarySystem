@@ -4,6 +4,7 @@ namespace VeterinarySystem.Models
 {
     public class PetRecord
     {
+        public int PetID { get; set; }
         public string? PetName { get; set; }
         public string? PetSpecies { get; set; }
         public string? PetBreed { get; set; }

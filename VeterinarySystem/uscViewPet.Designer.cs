@@ -30,6 +30,8 @@
         {
             btnBack = new Button();
             panelMain = new Panel();
+            labelGenderLabel = new Label();
+            txtGender = new Label();
             txtContact = new Label();
             label12 = new Label();
             txtAddress = new Label();
@@ -46,7 +48,6 @@
             label5 = new Label();
             txtPetAge = new Label();
             label4 = new Label();
-            btnViewHistory = new Button();
             txtLastApp = new Label();
             txtUpcomingApp = new Label();
             label2 = new Label();
@@ -54,10 +55,6 @@
             txtPetType = new Label();
             lblPetName = new Label();
             pbPetPicture = new PictureBox();
-            btnEdit = new Button();
-            btnDelete = new Button();
-            labelGenderLabel = new Label();
-            txtGender = new Label();
             panelMain.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pbPetPicture).BeginInit();
@@ -98,7 +95,6 @@
             panelMain.Controls.Add(label5);
             panelMain.Controls.Add(txtPetAge);
             panelMain.Controls.Add(label4);
-            panelMain.Controls.Add(btnViewHistory);
             panelMain.Controls.Add(txtLastApp);
             panelMain.Controls.Add(txtUpcomingApp);
             panelMain.Controls.Add(label2);
@@ -111,6 +107,28 @@
             panelMain.Name = "panelMain";
             panelMain.Size = new Size(1233, 597);
             panelMain.TabIndex = 1;
+            // 
+            // labelGenderLabel
+            // 
+            labelGenderLabel.AutoSize = true;
+            labelGenderLabel.BackColor = Color.Transparent;
+            labelGenderLabel.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelGenderLabel.Location = new Point(655, 99);
+            labelGenderLabel.Name = "labelGenderLabel";
+            labelGenderLabel.Size = new Size(89, 30);
+            labelGenderLabel.TabIndex = 23;
+            labelGenderLabel.Text = "Gender:";
+            // 
+            // txtGender
+            // 
+            txtGender.AutoSize = true;
+            txtGender.BackColor = Color.Transparent;
+            txtGender.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtGender.Location = new Point(750, 99);
+            txtGender.Name = "txtGender";
+            txtGender.Size = new Size(63, 30);
+            txtGender.TabIndex = 24;
+            txtGender.Text = "blank";
             // 
             // txtContact
             // 
@@ -264,19 +282,6 @@
             label4.TabIndex = 8;
             label4.Text = "Age:";
             // 
-            // btnViewHistory
-            // 
-            btnViewHistory.BackColor = Color.FromArgb(224, 224, 224);
-            btnViewHistory.FlatStyle = FlatStyle.Flat;
-            btnViewHistory.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnViewHistory.Location = new Point(129, 523);
-            btnViewHistory.Name = "btnViewHistory";
-            btnViewHistory.Size = new Size(127, 31);
-            btnViewHistory.TabIndex = 7;
-            btnViewHistory.Text = "View History";
-            btnViewHistory.UseVisualStyleBackColor = false;
-            btnViewHistory.Click += btnViewHistory_Click;
-            // 
             // txtLastApp
             // 
             txtLastApp.AutoSize = true;
@@ -352,65 +357,11 @@
             pbPetPicture.TabIndex = 0;
             pbPetPicture.TabStop = false;
             // 
-            // btnEdit
-            // 
-            btnEdit.BackColor = Color.FromArgb(64, 120, 170);
-            btnEdit.Cursor = Cursors.Hand;
-            btnEdit.FlatStyle = FlatStyle.Popup;
-            btnEdit.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnEdit.ForeColor = Color.White;
-            btnEdit.Location = new Point(995, 11);
-            btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(138, 44);
-            btnEdit.TabIndex = 2;
-            btnEdit.Text = "Edit Info";
-            btnEdit.UseVisualStyleBackColor = false;
-            btnEdit.Click += btnEdit_Click;
-            // 
-            // btnDelete
-            // 
-            btnDelete.BackColor = Color.Brown;
-            btnDelete.Cursor = Cursors.Hand;
-            btnDelete.FlatStyle = FlatStyle.Popup;
-            btnDelete.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnDelete.ForeColor = Color.White;
-            btnDelete.Image = Properties.Resources.assets_2_;
-            btnDelete.Location = new Point(1146, 11);
-            btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(63, 44);
-            btnDelete.TabIndex = 3;
-            btnDelete.UseVisualStyleBackColor = false;
-            btnDelete.Click += btnDelete_Click;
-            // 
-            // labelGenderLabel
-            // 
-            labelGenderLabel.AutoSize = true;
-            labelGenderLabel.BackColor = Color.Transparent;
-            labelGenderLabel.Font = new Font("Segoe UI Semibold", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            labelGenderLabel.Location = new Point(655, 99);
-            labelGenderLabel.Name = "labelGenderLabel";
-            labelGenderLabel.Size = new Size(89, 30);
-            labelGenderLabel.TabIndex = 23;
-            labelGenderLabel.Text = "Gender:";
-            // 
-            // txtGender
-            // 
-            txtGender.AutoSize = true;
-            txtGender.BackColor = Color.Transparent;
-            txtGender.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtGender.Location = new Point(750, 99);
-            txtGender.Name = "txtGender";
-            txtGender.Size = new Size(63, 30);
-            txtGender.TabIndex = 24;
-            txtGender.Text = "blank";
-            // 
             // uscViewPet
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(244, 166, 74);
-            Controls.Add(btnDelete);
-            Controls.Add(btnEdit);
             Controls.Add(btnBack);
             Controls.Add(panelMain);
             Name = "uscViewPet";
@@ -430,7 +381,6 @@
         private PictureBox pbPetPicture;
         private Label label1;
         private Label txtPetType;
-        private Button btnViewHistory;
         private Label txtLastApp;
         private Label txtUpcomingApp;
         private Label label2;
@@ -440,8 +390,6 @@
         private Label txtPetAge;
         private Label label4;
         private Label txtWeight;
-        private Button btnEdit;
-        private Button btnDelete;
         private Label label7;
         private Panel panel1;
         private Label txtMedHist;
